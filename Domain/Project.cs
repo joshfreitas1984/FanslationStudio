@@ -52,14 +52,14 @@ namespace FanslationStudio.Domain
             File.WriteAllText(_projectFile, jsonString);
         }
 
-        public void CalculateFolders(Config config)
+        public void CreateWorkspaceFolder(Config config)
         {
             _config = config;
             _projectFile = $"{_config.WorkshopFolder}\\{Name}.project";
 
             foreach (var version in Versions)
             {
-                version.CalculateFolders(_config, Name);
+                version.CreateWorkspaceFolders(_config, Name);
             }
         }
     }

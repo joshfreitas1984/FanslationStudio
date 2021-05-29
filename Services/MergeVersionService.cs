@@ -21,49 +21,30 @@ namespace FanslationStudio.Services
             {
                 string newFile = oldFile.Replace(previousVersionFolder, newVersionFolder);
 
-                List<ScriptTranslation> previousTrans = ScriptTranslationService.LoadScriptTranslations(oldFile);
-                List<ScriptTranslation> newTrans = ScriptTranslationService.LoadScriptTranslations(newFile);
+                ScriptTranslation previousTrans = ScriptTranslationService.LoadIndividualScriptTranslation(oldFile);
+                ScriptTranslation newTrans = ScriptTranslationService.LoadIndividualScriptTranslation(newFile);
 
                 MergeVersions(previousTrans, newTrans);
 
-                File.Delete(newFile);
-                ScriptTranslationService.WriteFiles(newFile, newTrans);
+                ScriptTranslationService.WriteIndividualScriptFile(Path.GetDirectoryName(newFile), newTrans, true);
             }
         }
 
-        private static void MergeVersions(List<ScriptTranslation> previousVersionTrans, List<ScriptTranslation> newVersionTrans)
+        private static void MergeVersions(ScriptTranslation previousVersionTrans, ScriptTranslation newVersionTrans)
         {
-            var previousVersionLines = new Dictionary<string, ScriptTranslation>();
-            var newVersionLines = new Dictionary<string, ScriptTranslation>();
-
-            //Look at dictionaries
-            foreach (var line in previousVersionTrans)
-                previousVersionLines.Add(line.LineId, line);
-
-            foreach (var line in newVersionTrans)
-                newVersionLines.Add(line.LineId, line);
-
-            foreach (var prevLine in previousVersionLines)
+            //WARNING: Will only work if the splits are the same
+            for(int i = 0; i < previousVersionTrans.Items.Count; i++)
             {
-                //Merg lines
-                if (newVersionLines.ContainsKey(prevLine.Key))
+                var prevItem = previousVersionTrans.Items[i];
+                var newItem = newVersionTrans.Items[i];
+
+                if (newItem.RequiresTranslation)
                 {
-                    var newLine = newVersionLines[prevLine.Key];
+                    newItem.InitialTranslation = prevItem.ResultingTranslation;
+                    newItem.ManualTranslation = string.Empty;
 
-                    for (int i = 0; i < prevLine.Value.Items.Count; i++)
-                    {
-                        var prevItem = prevLine.Value.Items[i];
-                        var newItem = newLine.Items[i];
-
-                        if (prevItem.RequiresTranslation)
-                        {
-                            newItem.InitialTranslation = prevItem.ResultingTranslation;
-                            newItem.ManualTranslation = string.Empty;
-
-                            if (prevItem.Raw != newItem.Raw)
-                                newItem.MergeHadRawChanges = true;
-                        }
-                    }
+                    if (prevItem.Raw != newItem.Raw)
+                        newItem.MergeHadRawChanges = true;
                 }
             }
         }

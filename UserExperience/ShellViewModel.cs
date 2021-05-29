@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using FanslationStudio.Domain;
+using FanslationStudio.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,20 +35,23 @@ namespace FanslationStudio.UserExperience
 
             SelectProject(@"X:\FanslationStudioWorkshop\HLTS.project");
 
-            //project.CalculateFolders(_config);
+            _currentProject.CreateWorkspaceFolder(_config);
 
-            //foreach (var version in project.Versions)
-            //{
-            //    version.InitialiseProductVersion();
-            //    //version.LoadTranslationsThatExist(project);
-            //    //version.LoadTranslationsFromRaws(project);
+            //Lets regenerate everything
+            foreach (var version in _currentProject.Versions)
+            {
+                //version.CopyRawsIntoWorkspaceFolder();
+                //version.ImportRawLinesAsTranslations(_currentProject);
 
-            //    //if (version.OldGameTranslator)
-            //    //    version.MigrateGtRaws(project);
-            //}
+                //var x = version.LoadTranslationsThatExist(_currentProject);
+
+                // if (version.OldGameTranslator)
+                //    MigrateGameTranslatorFormatService.MigrateGtRaws(_config, _currentProject, version);
+            }
 
             //Migrate 1.29 to 1.33
-            //MergeVersionService.MergeOldVersion(_config, project, project.Versions[0], project.Versions[1]);
+            //MergeVersionService.MergeOldVersion(_config, _currentProject, 
+            //    _currentProject.Versions[0], _currentProject.Versions[1]);
 
             ShowProject();
         }
@@ -55,7 +59,7 @@ namespace FanslationStudio.UserExperience
         public void SelectProject(string fileName)
         {
             _currentProject = Project.LoadProjectFile(@"X:\FanslationStudioWorkshop\HLTS.project");
-            _currentProject.CalculateFolders(_config);
+            _currentProject.CreateWorkspaceFolder(_config);
 
             SelectVersion(_currentProject.Versions.Last());
         }
@@ -63,7 +67,6 @@ namespace FanslationStudio.UserExperience
         public void SelectVersion(ProjectVersion version)
         {
             _currentVersion = version;
-            version.InitialiseProductVersion();
             SetTitle();
         }
 

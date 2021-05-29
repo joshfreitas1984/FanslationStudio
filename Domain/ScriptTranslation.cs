@@ -8,7 +8,6 @@ namespace FanslationStudio.Domain
     {
         public string LineId { get; set; }
         public string RawLine { get; set; }
-        public string ReconstructedLine { get; set; }
 
         public List<ScriptTranslationItem> Items { get; set; }
     }

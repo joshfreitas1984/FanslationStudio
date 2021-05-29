@@ -27,8 +27,8 @@ namespace FanslationStudio.Services
                     {
                         Version = "1.29",
                         RawInputFolder = @"X:\repos\GameTranslator\GameTranslator\Hlts\input1.29",
-                        //OldGameTranslator = true,
-                        //GameTranslatorSource = @"X:\repos\GameTranslator\GameTranslator\Hlts\finaloutput1.29",
+                        OldGameTranslator = true,
+                        GameTranslatorSource = @"X:\repos\GameTranslator\GameTranslator\Hlts\finaloutput1.29",
                     },
                     new ProjectVersion()
                     {
@@ -224,7 +224,7 @@ namespace FanslationStudio.Services
                 }
             };
 
-            project.CalculateFolders(config);
+            project.CreateWorkspaceFolder(config);
             project.WriteProjectFile();
         }
     }
