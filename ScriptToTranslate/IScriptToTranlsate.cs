@@ -7,5 +7,6 @@ namespace FanslationStudio.ScriptToTranslate
     {
         string SourcePath { get; set; }
         List<ScriptTranslation> GetTranslationLines(string rawFolder);
+        void OutputLines(List<ScriptTranslation> scripts, string outputFolder);
     }
 }

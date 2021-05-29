@@ -85,6 +85,23 @@ namespace FanslationStudio.Domain
                 //Go through each script and add it if its missing
                 ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, scripts, false);
             }
-        }        
+        }    
+        
+        public void GenerateOutput(Project project)
+        {
+            string outputFolder = ProjectFolderService.CalculateOutputVersionFolder(_projectFolder, this);
+
+            if (!Directory.Exists(outputFolder))
+                Directory.CreateDirectory(outputFolder);
+
+            foreach (var scriptToTranslate in project.ScriptsToTranslate)
+            {
+                string translatedFolder = $"{_translationFolderVersion}\\{scriptToTranslate.SourcePath}";
+
+                //Load last saved translation
+                var scripts = ScriptTranslationService.LoadBulkScriptTranslations(translatedFolder);
+                scriptToTranslate.OutputLines(scripts, outputFolder);
+            }
+        }
     }
 }

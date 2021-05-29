@@ -47,6 +47,8 @@ namespace FanslationStudio.UserExperience
 
                 // if (version.OldGameTranslator)
                 //    MigrateGameTranslatorFormatService.MigrateGtRaws(_config, _currentProject, version);
+
+                //version.GenerateOutput(_currentProject);
             }
 
             //Migrate 1.29 to 1.33

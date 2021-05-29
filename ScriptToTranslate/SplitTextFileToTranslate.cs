@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace FanslationStudio.ScriptToTranslate
@@ -71,6 +72,40 @@ namespace FanslationStudio.ScriptToTranslate
             }           
 
             return translations;
+        }
+
+        public void OutputLines(List<ScriptTranslation> scripts, string outputFolder)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (var script in scripts)
+            {
+                var line = new StringBuilder();
+
+                foreach (var item in script.Items)
+                {
+                    line.Append(item.ResultingTranslation);
+                    line.Append(SplitCharacters);
+                }
+
+                if (line.ToString().EndsWith(SplitCharacters))
+                {
+                    line.Remove(line.Length - SplitCharacters.Length, SplitCharacters.Length);
+                }
+
+                lines.Add(line.ToString());
+            }
+
+            string file = $"{outputFolder}\\{SourcePath}";
+            string folder = Path.GetDirectoryName(file);
+
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            if (File.Exists(file))
+                File.Delete(file);
+
+            File.WriteAllLines(file, lines.ToArray());
         }
 
         private const string _wierdOpen = "【";
