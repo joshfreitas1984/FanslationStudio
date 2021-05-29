@@ -1,0 +1,25 @@
+﻿<Window x:Class="FanslationStudio.UserExperience.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FanslationStudio"
+        mc:Ignorable="d"
+        Title="{Binding Path=Title}" Width="1920" Height="1080">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>
+            <Button x:Name="ShowProject">Project</Button>
+            <Button x:Name="ShowManualTranslate">Manual Translation</Button>
+            <Button x:Name="ShowSettings">Settings</Button>
+        </StackPanel>
+
+        <ContentControl x:Name="ActiveItem" 
+                        Grid.Column="1">
+        </ContentControl>
+    </Grid>
+</Window>

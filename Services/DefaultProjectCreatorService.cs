@@ -1,57 +1,13 @@
 ﻿using FanslationStudio.Domain;
 using FanslationStudio.ScriptToTranslate;
-using FanslationStudio.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace FanslationStudio
+namespace FanslationStudio.Services
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public static class DefaultProjectCreatorService
     {
-        private Config _config;
-
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            _config = Config.LoadConfig();
-            _config.WriteConfig();
-
-            CreateDefaultHLTSProject(_config);
-
-            var project = Project.LoadProjectFile(@"X:\FanslationStudioWorkshop\HLTS.project");
-
-            project.CalculateFolders(_config);
-
-            foreach (var version in project.Versions)
-            {
-                version.InitialiseProductVersion();
-                version.LoadTranslationsThatExist(project);
-                version.LoadTranslationsFromRaws(project);
-
-                //if (version.OldGameTranslator)
-                //    version.MigrateGtRaws(project);
-            }
-
-            //Migrate 1.29 to 1.33
-            MergeVersionService.MergeOldVersion(_config, project, project.Versions[0], project.Versions[1]);
-        }
-
         /// <summary>
         /// HLTS has all the text files loaded in AssetBundles\config
         /// 
@@ -59,7 +15,7 @@ namespace FanslationStudio
         /// - Only need the assets in \textfiles since all the other stuff is code
         /// - Then weed out all the config ones that dont actually contain text to translate
         /// </summary>
-        public void CreateDefaultHLTSProject(Config config)
+        public static void CreateDefaultHLTSProject(Config config)
         {
             var project = new Project()
             {
