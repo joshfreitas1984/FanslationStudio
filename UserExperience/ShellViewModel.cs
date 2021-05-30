@@ -5,15 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace FanslationStudio.UserExperience
 {
+
     public class ShellViewModel : Conductor<object>
-    {
+    {       
         private Config _config;
         private Project _currentProject;
         private ProjectVersion _currentVersion;
-        private string _title;
+        private string _title = "Title";
 
         public string Title
         {
@@ -77,9 +80,42 @@ namespace FanslationStudio.UserExperience
             Title = $"FanslationStudio :: {_currentProject.Name} - Version: {_currentVersion.Version}";
         }
 
+        //Method to handle navigation because we cant get caliburn to pipe through
+        public void TabSelectionChanged(object args)
+        {          
+            if (args is TabControl)
+            {
+                string name = ((args as TabControl).SelectedItem as TabItem).Name;
+                switch(name)
+                {
+                    case "Project":
+                        ShowProject();
+                        break;
+                    case "ManualTranslate":
+                        ShowManualTranslate();
+                        break;
+                }
+            }
+        }
+
         public async void ShowProject()
         {
-            await ActivateItemAsync(new ProjectViewModel());
+            var vm = IoC.Get<ProjectViewModel>();
+            vm.Config = _config;
+            vm.Project = _currentProject;
+            vm.Version = _currentVersion;
+
+            await ActivateItemAsync(vm);
+        }
+
+        public async void ShowManualTranslate()
+        {
+            var vm = IoC.Get<ManualTranslateViewModel>();
+            vm.Config = _config;
+            vm.Project = _currentProject;
+            vm.Version = _currentVersion;
+
+            await ActivateItemAsync(vm);
         }
     }
 }

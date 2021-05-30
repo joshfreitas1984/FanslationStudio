@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace FanslationStudio.ScriptToTranslate
 {
-    public class SplitTextFileToTranslate : IScriptToTranlsate
+    public class SplitTextFileToTranslate : IScriptToTranslate
     {
         public string SourcePath { get; set; }
         public int[] SplitIndexes { get; set; }

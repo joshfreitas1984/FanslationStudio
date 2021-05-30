@@ -56,9 +56,9 @@ namespace FanslationStudio.Domain
             }
         }
 
-        public Dictionary<IScriptToTranlsate, List<ScriptTranslation>> LoadTranslationsThatExist(Project project)
+        public Dictionary<IScriptToTranslate, List<ScriptTranslation>> LoadTranslationsThatExist(Project project)
         {
-            var response = new Dictionary<IScriptToTranlsate, List<ScriptTranslation>>();
+            var response = new Dictionary<IScriptToTranslate, List<ScriptTranslation>>();
 
             foreach (var scriptToTranslate in project.ScriptsToTranslate)
             {

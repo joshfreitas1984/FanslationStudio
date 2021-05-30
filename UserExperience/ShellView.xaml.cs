@@ -28,6 +28,5 @@ namespace FanslationStudio.UserExperience
         {
             InitializeComponent();                       
         }
-               
     }
 }

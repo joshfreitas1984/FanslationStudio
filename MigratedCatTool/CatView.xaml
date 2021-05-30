@@ -3,10 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:FanslationStudio"
         mc:Ignorable="d"        
         Title="FanslationStudio" Height="1080" Width="1920">
+
+    <!--:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"-->
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -118,6 +120,7 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
+            <!--
             <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0,1">
                 <wpf:ChromiumWebBrowser x:Name="Translator1" Address="https://www.deepl.com/translator#zh/en/"/>
             </Border>
@@ -125,6 +128,7 @@
             <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0,1">
                 <wpf:ChromiumWebBrowser x:Name="Translator2" Address="https://translate.google.com"/>
             </Border>
+            -->
         </Grid>
     </Grid>
 </Window>

@@ -1,12 +1,386 @@
 ﻿<UserControl x:Class="FanslationStudio.UserExperience.ManualTranslateView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FanslationStudio.UserExperience"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:FanslationStudio.UserExperience"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cal="http://www.caliburnproject.org"
+			 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+			 xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
+			 mc:Ignorable="d"
+			 d:Width="1520"
+			 d:Height="980">
+
+	<Grid>
+		<materialDesign:DrawerHost OpenMode="Default"
+								   IsLeftDrawerOpen="{Binding ShowSearchPanel}"
+								   d:IsLeftDrawerOpen="true"
+								   d:OpenMode="Standard">
+			<materialDesign:DrawerHost OpenMode="Standard"
+									   IsRightDrawerOpen="{Binding ShowMtlPanel}"
+									   d:IsRightDrawerOpen="true">
+
+				<StackPanel Margin="10"
+							controls:Spacing.Vertical="10">
+					<TextBlock Style="{StaticResource MaterialDesignHeadline3TextBlock}"
+							   Text="Manual Translation" />
+
+					<!--Search Results-->
+					<materialDesign:ColorZone Padding="10,5"
+											  Mode="PrimaryMid">
+
+						<StackPanel Orientation="Horizontal">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="Search Files" />
+
+							<Button x:Name="ShowSearchFiles"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="Search"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Search For Lines"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+						</StackPanel>
+					</materialDesign:ColorZone>
+					<DataGrid ItemsSource="{Binding SearchResults}"
+							  cal:Message.Attach="[Event SelectionChanged] = [Action SelectSearchResult($this)]"
+							  MinHeight="250"
+							  MaxHeight="250"
+							  IsReadOnly="True"
+							  SelectionUnit="FullRow"
+							  SelectionMode="Single" />
+
+					<!--Raw-->
+					<materialDesign:ColorZone Padding="10,5"
+											  Mode="PrimaryMid">
+
+						<StackPanel Orientation="Horizontal">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="Raw" />
+
+							<Button x:Name="CopyRawToScratch"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="ContentCopy"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Copy to Scratch"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+						</StackPanel>
+					</materialDesign:ColorZone>
+					<TextBox x:Name="SelectedRaw"
+							 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+							 VerticalAlignment="Top"
+							 AcceptsReturn="True"
+							 TextWrapping="Wrap"
+							 VerticalScrollBarVisibility="Auto"
+							 IsEnabled="False" />
+
+					<!--Current-->
+					<materialDesign:ColorZone Padding="10,5"
+											  Mode="PrimaryMid">
+
+						<StackPanel Orientation="Horizontal">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="Current Translation" />
+
+							<Button x:Name="CopyCurrentToScratch"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="ContentCopy"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Copy to Scratch"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+						</StackPanel>
+					</materialDesign:ColorZone>
+					<TextBox x:Name="SelectedCurrentTranslation"
+							 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+							 VerticalAlignment="Top"
+							 AcceptsReturn="True"
+							 TextWrapping="Wrap"
+							 VerticalScrollBarVisibility="Auto"
+							 IsEnabled="False" />
+
+					<!--Scratch Zone-->
+					<materialDesign:ColorZone Padding="10,5"
+											  Mode="PrimaryMid">
+
+						<StackPanel Orientation="Horizontal">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="Scratch Zone" />
+
+							<Button x:Name="WriteScratchZone"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="ContentSaveMove"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Save new Translation"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+							<ToggleButton x:Name="ShowMtlPanel"
+										  Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
+										  IsChecked="False" />
+
+							<TextBlock Text="MTL Panel"
+									   VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignTextBlock}"
+									   FontSize="10" />
+
+							<materialDesign:ColorZone Mode="Standard"
+													  Padding="8 4 8 4"
+													  CornerRadius="2"
+													  Panel.ZIndex="1"
+													  Margin="16 0 0 0"
+													  materialDesign:ShadowAssist.ShadowDepth="Depth1">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="*" />
+									</Grid.ColumnDefinitions>
+									<Button x:Name="QuickFind"
+											Style="{DynamicResource MaterialDesignToolButton}">
+										<materialDesign:PackIcon Kind="Search"
+																 Opacity=".56" />
+									</Button>
+									<TextBox x:Name="QuickFindTerm"
+											 Grid.Column="1"
+											 Margin="8 0 0 0"
+											 materialDesign:HintAssist.Hint="Quick Find"
+											 BorderThickness="0"
+											 MinWidth="200"
+											 VerticalAlignment="Center" />
+								</Grid>
+							</materialDesign:ColorZone>
+
+							<materialDesign:ColorZone Mode="Standard"
+													  Padding="8 4 8 4"
+													  CornerRadius="2"
+													  Panel.ZIndex="1"
+													  Margin="16 0 0 0"
+													  materialDesign:ShadowAssist.ShadowDepth="Depth1">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="*" />
+									</Grid.ColumnDefinitions>
+									<TextBox x:Name="QuickReplaceTerm"
+											 Grid.Column="0"
+											 Margin="8 0 0 0"
+											 materialDesign:HintAssist.Hint="Quick Replace (Ctrl+H)"
+											 BorderThickness="0"
+											 MinWidth="200"
+											 VerticalAlignment="Center" />
+									<Button x:Name="QuickReplace"
+											Style="{DynamicResource MaterialDesignToolButton}"
+											Grid.Column="1">
+										<materialDesign:PackIcon Kind="Send"
+																 Opacity=".56"
+																 Margin="8 0 0 0" />
+									</Button>
+								</Grid>
+							</materialDesign:ColorZone>
+						</StackPanel>
+					</materialDesign:ColorZone>
+					<TextBox x:Name="ScratchZone"
+							 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+							 VerticalAlignment="Top"
+							 AcceptsReturn="True"
+							 TextWrapping="Wrap"
+							 VerticalScrollBarVisibility="Auto"
+							 IsEnabled="True" />
+				</StackPanel>
+
+				<!-- MTL Panels -->
+				<materialDesign:DrawerHost.RightDrawerContent>
+					<Button>Right Drawer</Button>
+				</materialDesign:DrawerHost.RightDrawerContent>
+			</materialDesign:DrawerHost>
+
+			<!-- Search Panels: Have to manually bind drawers the conventions dont seem to work -->
+			<materialDesign:DrawerHost.LeftDrawerContent>
+				<StackPanel Margin="10"
+							controls:Spacing.Vertical="10">
+					<TextBlock Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+							   Text="Search" />
+
+					<materialDesign:ColorZone Mode="Standard"
+											  Padding="8 4 8 4"
+											  CornerRadius="2"
+											  Panel.ZIndex="1"
+											  Margin="16 0 0 0"
+											  materialDesign:ShadowAssist.ShadowDepth="Depth1">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							<Button Style="{DynamicResource MaterialDesignToolButton}">
+								<materialDesign:PackIcon Kind="Search"
+														 Opacity=".56" />
+							</Button>
+							<TextBox x:Name="QuickSearchTerm"
+									 Grid.Column="1"
+									 Margin="8 0 0 0"
+									 materialDesign:HintAssist.Hint="Quick Find"
+									 BorderThickness="0"
+									 MinWidth="200"
+									 VerticalAlignment="Center" />
+							<Button cal:Message.Attach="[Event Click] = [Action QuickSearch()]"
+									Style="{DynamicResource MaterialDesignToolButton}"
+									Grid.Column="2">
+								<materialDesign:PackIcon Kind="Send"
+														 Opacity=".56"
+														 Margin="8 0 0 0" />
+							</Button>
+						</Grid>
+					</materialDesign:ColorZone>
+
+					<!-- Search Patterns -->
+					<materialDesign:ColorZone Padding="10,5"
+											  Mode="PrimaryMid">
+
+						<StackPanel Orientation="Horizontal">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="Search Patterns" />
+
+							<Button cal:Message.Attach="[Event Click] = [Action AddSearchPattern()]"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="Add"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Add Pattern"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+							<Button cal:Message.Attach="[Event Click] = [Action SortSearchPattern()]"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="SortAlphabeticalAscending"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Sort Patterns"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+							<Button cal:Message.Attach="[Event Click] = [Action SearchWithPatterns()]"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="FileSearch"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Search Files"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+						</StackPanel>
+					</materialDesign:ColorZone>
+
+					<DataGrid ItemsSource="{Binding SearchPatterns}"
+							  IsReadOnly="False"
+							  AutoGenerateColumns="False"
+							  SelectionUnit="FullRow"
+							  SelectionMode="Single">
+						<DataGrid.Columns>
+							<DataGridTextColumn Binding="{Binding Find}"
+												Header="Find (Regex)"
+												Width="200"
+												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+								<DataGridTextColumn.HeaderStyle>
+									<Style TargetType="{x:Type DataGridColumnHeader}"
+										   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+										<Setter Property="HorizontalContentAlignment"
+												Value="Left" />
+									</Style>
+								</DataGridTextColumn.HeaderStyle>
+							</DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Replacement}"
+												Header="Replace"
+												Width="200"
+												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+								<DataGridTextColumn.HeaderStyle>
+									<Style TargetType="{x:Type DataGridColumnHeader}"
+										   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+										<Setter Property="HorizontalContentAlignment"
+												Value="Left" />
+									</Style>
+								</DataGridTextColumn.HeaderStyle>
+							</DataGridTextColumn>
+							<DataGridCheckBoxColumn Binding="{Binding CaseSensitive}"
+													Header="Case Sensitive"
+													ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+													EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
+							</DataGridCheckBoxColumn>
+							<DataGridTemplateColumn Header="">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<Button cal:Message.Attach="[Event Click] = [Action RemoveSearchPattern($this)]"
+												Style="{StaticResource MaterialDesignToolButton}">
+											<materialDesign:PackIcon Kind="Delete"
+																	 Height="16"
+																	 Width="16" />
+										</Button>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
+			</materialDesign:DrawerHost.LeftDrawerContent>
+		</materialDesign:DrawerHost>
+	</Grid>
 </UserControl>

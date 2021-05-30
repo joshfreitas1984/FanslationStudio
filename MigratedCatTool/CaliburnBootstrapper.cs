@@ -1,6 +1,6 @@
 ﻿using Caliburn.Micro;
-using CefSharp;
-using CefSharp.Wpf;
+//using CefSharp;
+//using CefSharp.Wpf;
 using FanslationStudio.UserExperience;
 using System;
 using System.Collections.Generic;
@@ -17,9 +17,9 @@ namespace FanslationStudio.MigratedCatTool
         {
             Initialize();
 
-            var settings = new CefSettings();
-            //settings.CefCommandLineArgs.Add("allow-no-sandbox-job", "1");
-            Cef.Initialize(settings);
+            //var settings = new CefSettings();
+            ////settings.CefCommandLineArgs.Add("allow-no-sandbox-job", "1");
+            //Cef.Initialize(settings);
         }
 
         protected override void Configure()

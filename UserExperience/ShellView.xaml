@@ -4,22 +4,95 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FanslationStudio"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:cal="http://www.caliburnproject.org"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="{Binding Path=Title}" Width="1920" Height="1080">
+        Title="{Binding Path=Title}" 
+        WindowStartupLocation="CenterScreen"
+        Width="1920" 
+        Height="1080">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+        <!--Header Menu-->
+        <DockPanel>
+            <materialDesign:ColorZone
+                Padding="16"
+                materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                Mode="PrimaryMid"
+                DockPanel.Dock="Top">
 
-        <StackPanel>
-            <Button x:Name="ShowProject">Project</Button>
-            <Button x:Name="ShowManualTranslate">Manual Translation</Button>
-            <Button x:Name="ShowSettings">Settings</Button>
-        </StackPanel>
+                <DockPanel>
+                    <Button
+                        Style="{StaticResource MaterialDesignFloatingActionButton}"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                        materialDesign:ButtonProgressAssist.Value="-1"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                        Content="{materialDesign:PackIcon DotsHorizontal}" />
 
-        <ContentControl x:Name="ActiveItem" 
-                        Grid.Column="1">
-        </ContentControl>
+                    <Button
+                        Style="{StaticResource MaterialDesignFloatingActionButton}"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                        materialDesign:ButtonProgressAssist.Value="100"
+                        Content="{materialDesign:PackIcon Tick}" />
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="{Binding Path=Title}"
+                        d:Text="FanslationStudio: HLTS - version 1.0"/>
+                </DockPanel>
+            </materialDesign:ColorZone>
+
+            <!-- Side Navigation -->
+            <TabControl
+                Style="{StaticResource MaterialDesignNavigatilRailTabControl}"                    
+                cal:Message.Attach="[Event SelectionChanged] = [Action TabSelectionChanged($source)]"
+                materialDesign:ColorZoneAssist.Mode="Standard"
+                materialDesign:ShadowAssist.ShadowDepth="Depth0">
+
+                <TabItem x:Name="Project" Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="Auto">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Heart" Width="24" Height="24" />
+                            <TextBlock VerticalAlignment="Center" Margin="10,0">Project Details</TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem x:Name="ManualTranslate" Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="Auto">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Spade" Width="24" Height="24" />
+                            <TextBlock VerticalAlignment="Center" Margin="10,0">Manual Translate</TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Breadcrumbs area -->
+                <StackPanel>
+                </StackPanel>
+
+                <!-- Content -->
+                <ScrollViewer
+                    x:Name="MainScrollViewer"
+                    Grid.Row="1"
+                    materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True" >
+
+                    <ContentControl x:Name="ActiveItem"/>
+                </ScrollViewer>
+
+                <materialDesign:Snackbar
+                    x:Name="MainSnackbar"
+                    MessageQueue="{materialDesign:MessageQueue}"
+                    Grid.Row="1"/>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>

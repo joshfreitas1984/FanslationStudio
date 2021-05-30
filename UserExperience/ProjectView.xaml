@@ -1,12 +1,158 @@
-﻿<UserControl x:Class="FanslationStudio.UserExperience.ProjectView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FanslationStudio.UserExperience"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl 
+    x:Class="FanslationStudio.UserExperience.ProjectView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:FanslationStudio.UserExperience"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
+    mc:Ignorable="d" 
+    d:DesignHeight="450" 
+    d:DesignWidth="800">
+
     <Grid>
-        <Button>Project</Button>
+        <StackPanel Margin="10" controls:Spacing.Vertical="10">
+            <TextBlock  
+                Style="{StaticResource MaterialDesignHeadline3TextBlock}"
+                Text="{Binding Path=ProjectName, FallbackValue=Project}" />
+
+            <TextBox
+                x:Name="ProjectName"
+                materialDesign:HintAssist.Hint="Project Name"
+                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                Margin="0,5"
+                VerticalAlignment="Center" />
+
+            <TextBox
+                x:Name="ProjectFile"
+                IsEnabled="False"
+                materialDesign:HintAssist.Hint="Project File"
+                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                Margin="0,5"
+                VerticalAlignment="Center" />
+
+            <!-- Versions -->
+            <StackPanel>
+                <materialDesign:ColorZone
+                    Padding="10,5"                    
+                    Mode="PrimaryMid">
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock 
+                            VerticalAlignment="Center"
+                            Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                            Text="Versions"/>
+
+                        <Button 
+                            x:Name="AddVersion"
+                            Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Kind="Add" 
+                                    VerticalAlignment="Center"
+                                    Height="16"
+                                    Width="16" />
+                                <TextBlock 
+                                    Text="Add Version" 
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignTextBlock}"
+                                    FontSize="10"/>
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
+                </materialDesign:ColorZone>
+
+                <ListBox 
+                    cal:Message.Attach="[Event SelectionChanged] = [Action VersionSelectionChanged($this)]"
+                    ItemsSource="{Binding Path=Project.Versions}" controls:Spacing.Vertical="10">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" controls:Spacing.Horizontal="10">
+                                <TextBlock 
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                    FontSize="18"
+                                    Text="{Binding Version}"/>
+                                <Button 
+                                    cal:Message.Attach="[Event Click] = [Action DeleteVersion($this)]"
+                                    Style="{StaticResource MaterialDesignToolButton}">
+
+                                    <materialDesign:PackIcon
+                                        Kind="Delete"
+                                        Height="16"
+                                        Width="16" />
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+            
+            <!-- Scripts -->
+            <StackPanel>
+                <materialDesign:ColorZone
+                    Padding="10,5"                    
+                    Mode="PrimaryMid">
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock 
+                            VerticalAlignment="Center"
+                            Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                            Text="Scripts To Translate"/>
+
+                        <Button 
+                            x:Name="AddScript"
+                            Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Kind="Add" 
+                                    VerticalAlignment="Center"
+                                    Height="16"
+                                    Width="16" />
+                                <TextBlock 
+                                    Text="Add Script" 
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignTextBlock}"
+                                    FontSize="10"/>
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
+                </materialDesign:ColorZone>
+
+                <ListView 
+                    cal:Message.Attach="[Event SelectionChanged] = [Action ScriptSelectionChanged($this)]"
+                    ItemsSource="{Binding Project.ScriptsToTranslate}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" controls:Spacing.Horizontal="10">
+                                <TextBlock 
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                                    FontSize="18"
+                                    Text="{Binding SourcePath}"/>
+                                <Button 
+                                    cal:Message.Attach="[Event Click] = [Action DeleteScript($this)]"
+                                    Style="{StaticResource MaterialDesignToolButton}">
+
+                                    <materialDesign:PackIcon
+                                        Kind="Delete"
+                                        Height="16"
+                                        Width="16" />
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListView>
+
+            </StackPanel>
+
+        </StackPanel>
     </Grid>
 </UserControl>

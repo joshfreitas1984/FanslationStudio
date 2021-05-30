@@ -12,9 +12,11 @@ namespace FanslationStudio.Domain
 
         public string Name { get; set; }
 
-        public IScriptToTranlsate[] ScriptsToTranslate { get; set; }
+        public IScriptToTranslate[] ScriptsToTranslate { get; set; }
 
         public List<ProjectVersion> Versions { get; set; }
+
+        public string ProjectFile {  get { return _projectFile;  } }
 
         /// <summary>
         /// Loads project file for JSON file and returns project object
