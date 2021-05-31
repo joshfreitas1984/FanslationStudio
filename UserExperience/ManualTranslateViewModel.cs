@@ -274,7 +274,10 @@ namespace FanslationStudio.UserExperience
 
         public void WriteScratchZone()
         {
-            throw new NotImplementedException();
+            SelectedItem.Item.ManualTranslation = ScratchZone;
+            string folder = $"{_translationVersionFolder}\\{SelectedItem.SourcePath}";
+            ScriptTranslationService.WriteIndividualScriptFile(folder, 
+                SelectedItem.Script, true);
         }
 
         public void QuickReplace()
