@@ -278,6 +278,8 @@ namespace FanslationStudio.UserExperience
             string folder = $"{_translationVersionFolder}\\{SelectedItem.SourcePath}";
             ScriptTranslationService.WriteIndividualScriptFile(folder, 
                 SelectedItem.Script, true);
+
+            NotifyOfPropertyChange(() => SelectedCurrentTranslation);
         }
 
         public void QuickReplace()
