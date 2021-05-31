@@ -1,13 +1,12 @@
 ﻿using Caliburn.Micro;
-//using CefSharp;
-//using CefSharp.Wpf;
-using FanslationStudio.UserExperience;
+using CefSharp;
+using CefSharp.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 
-namespace FanslationStudio.MigratedCatTool
+namespace FanslationStudio.UserExperience
 {
     public class CaliburnBootstrapper : BootstrapperBase
     {
@@ -17,9 +16,9 @@ namespace FanslationStudio.MigratedCatTool
         {
             Initialize();
 
-            //var settings = new CefSettings();
-            ////settings.CefCommandLineArgs.Add("allow-no-sandbox-job", "1");
-            //Cef.Initialize(settings);
+            var settings = new CefSettings();
+            //settings.CefCommandLineArgs.Add("allow-no-sandbox-job", "1");
+            Cef.Initialize(settings);
         }
 
         protected override void Configure()
@@ -30,8 +29,6 @@ namespace FanslationStudio.MigratedCatTool
 
             //Register base Caliburn stuff
             _container.Singleton<IWindowManager, WindowManager>();
-            _container.Singleton<CatView>();
-            _container.Singleton<CatViewModel>();
             _container.Singleton<ShellView>();
             _container.Singleton<ShellViewModel>();
             _container.Singleton<ProjectView>();

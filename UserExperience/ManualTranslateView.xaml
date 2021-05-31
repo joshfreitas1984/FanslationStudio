@@ -8,6 +8,7 @@
 			 xmlns:cal="http://www.caliburnproject.org"
 			 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
 			 xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
+			 xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
 			 mc:Ignorable="d"
 			 d:Width="1620"
 			 d:Height="980">
@@ -281,12 +282,26 @@
 									   Text="DeepL" />
 						</materialDesign:ColorZone>
 
+						<Border BorderThickness="0,1"
+								Width="800"
+								Height="390">
+							<cef:ChromiumWebBrowser x:Name="DeepLTranslate"
+													Address="https://www.deepl.com/translator#zh/en/" />
+						</Border>
+
 						<materialDesign:ColorZone Padding="10,5"
 												  Mode="PrimaryMid">
 							<TextBlock VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignBody2TextBlock}"
 									   Text="Google Translate" />
 						</materialDesign:ColorZone>
+
+						<Border BorderThickness="0,1"
+								Width="800"
+								Height="390">
+							<cef:ChromiumWebBrowser x:Name="GoogleTranslate"
+													Address="https://translate.google.com" />
+						</Border>
 
 					</StackPanel>
 				</materialDesign:DrawerHost.RightDrawerContent>

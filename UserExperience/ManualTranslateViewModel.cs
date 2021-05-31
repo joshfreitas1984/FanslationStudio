@@ -8,11 +8,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FanslationStudio.UserExperience
 {
-    public class ManualTranslateViewModel : Screen, IHasProjectAndVersionViewModel
+    public class ManualTranslateViewModel : Screen, IHasProjectAndVersionViewModel, IHandle<Events.DeeplTransEvent>
     {
         #region IHasProjectAndVersionViewModel
 
@@ -32,7 +33,6 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => Config);
             }
         }
-
         public Project Project
         {
             get
@@ -45,7 +45,6 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => Project);
             }
         }
-
         public ProjectVersion Version
         {
             get
@@ -105,6 +104,7 @@ namespace FanslationStudio.UserExperience
 
         #endregion
 
+        private IEventAggregator _eventAggregator;
         private ObservableCollection<ScriptSearchResult> _searchResults;
         private ScriptSearchResult _selectedItem;
         private ObservableCollection<SearchPattern> _searchPatterns;
@@ -231,10 +231,12 @@ namespace FanslationStudio.UserExperience
             }
         }
 
-        public ManualTranslateViewModel()
+        public ManualTranslateViewModel(IEventAggregator eventAggregator)
         {
-            this.Activated += OnActivate;
-
+            _eventAggregator = eventAggregator;
+            _eventAggregator.SubscribeOnPublishedThread(this);
+            
+            Activated += OnActivate;
         }
 
         private void OnActivate(object sender, ActivationEventArgs e)
@@ -245,14 +247,14 @@ namespace FanslationStudio.UserExperience
             SearchPatterns = new ObservableCollection<SearchPattern>(_config.SearchPatterns);
         }
 
-        public void SelectSearchResult(ScriptSearchResult item)
+        public async void SelectSearchResult(ScriptSearchResult item)
         {
             SelectedItem = item;
             QuickFindTerm = item?.Find;
             QuickReplaceTerm = item?.Replace;
             ScratchZone = string.Empty;
 
-            //Todo: Perform translation
+            await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item?.Item.Raw));
         }
 
         public void ShowSearchFiles()
@@ -426,6 +428,13 @@ namespace FanslationStudio.UserExperience
             }
 
             return found;
+        }
+
+        public Task HandleAsync(Events.DeeplTransEvent message, CancellationToken cancellationToken)
+        {
+            ScratchZone = message.TransLine;
+
+            return Task.CompletedTask;
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace FanslationStudio.MigratedCatTool.Events
+﻿namespace FanslationStudio.UserExperience.Events
 {
     public class RawLineCopiedEvent
     {
