@@ -17,6 +17,7 @@ namespace FanslationStudio.UserExperience
         private Project _currentProject;
         private ProjectVersion _currentVersion;
         private string _title = "Title";
+        private Dictionary<string, List<ScriptTranslation>> _scripts;
 
         public string Title
         {
@@ -72,6 +73,11 @@ namespace FanslationStudio.UserExperience
         public void SelectVersion(ProjectVersion version)
         {
             _currentVersion = version;
+
+            string projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _currentProject.Name);
+            string folder = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _currentVersion);
+            _scripts = ScriptTranslationService.LoadTranslationsThatExist(_currentProject, folder);
+
             SetTitle();
         }
 
@@ -114,6 +120,7 @@ namespace FanslationStudio.UserExperience
             vm.Config = _config;
             vm.Project = _currentProject;
             vm.Version = _currentVersion;
+            vm.Scripts = _scripts;
 
             await ActivateItemAsync(vm);
         }

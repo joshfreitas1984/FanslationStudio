@@ -56,23 +56,6 @@ namespace FanslationStudio.Domain
             }
         }
 
-        public Dictionary<IScriptToTranslate, List<ScriptTranslation>> LoadTranslationsThatExist(Project project)
-        {
-            var response = new Dictionary<IScriptToTranslate, List<ScriptTranslation>>();
-
-            foreach (var scriptToTranslate in project.ScriptsToTranslate)
-            {
-                string translatedFolder = $"{_translationFolderVersion}\\{scriptToTranslate.SourcePath}";
-
-                //Load last saved translation
-                var lines = ScriptTranslationService.LoadBulkScriptTranslations(translatedFolder);
-           
-                response.Add(scriptToTranslate, lines);
-            }
-
-            return response;
-        }
-
         public void ImportRawLinesAsTranslations(Project project)
         {
             foreach (var scriptToTranslate in project.ScriptsToTranslate)

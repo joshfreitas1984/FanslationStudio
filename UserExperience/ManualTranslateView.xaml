@@ -9,7 +9,7 @@
 			 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
 			 xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
 			 mc:Ignorable="d"
-			 d:Width="1520"
+			 d:Width="1620"
 			 d:Height="980">
 
 	<Grid>
@@ -57,8 +57,51 @@
 							  MinHeight="250"
 							  MaxHeight="250"
 							  IsReadOnly="True"
+							  AutoGenerateColumns="False"
 							  SelectionUnit="FullRow"
-							  SelectionMode="Single" />
+							  SelectionMode="Single">
+						<DataGrid.Columns>
+							<DataGridTextColumn Binding="{Binding SourcePath}"
+												Header="Source Path"
+												Width="200"
+												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+								<DataGridTextColumn.HeaderStyle>
+									<Style TargetType="{x:Type DataGridColumnHeader}"
+										   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+										<Setter Property="HorizontalContentAlignment"
+												Value="Left" />
+									</Style>
+								</DataGridTextColumn.HeaderStyle>
+							</DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Path=Item.Raw}"
+												Header="Raw"
+												Width="400"
+												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+								<DataGridTextColumn.HeaderStyle>
+									<Style TargetType="{x:Type DataGridColumnHeader}"
+										   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+										<Setter Property="HorizontalContentAlignment"
+												Value="Left" />
+									</Style>
+								</DataGridTextColumn.HeaderStyle>
+							</DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Path=Item.ResultingTranslation}"
+												Header="Translation"
+												Width="400"
+												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+								<DataGridTextColumn.HeaderStyle>
+									<Style TargetType="{x:Type DataGridColumnHeader}"
+										   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+										<Setter Property="HorizontalContentAlignment"
+												Value="Left" />
+									</Style>
+								</DataGridTextColumn.HeaderStyle>
+							</DataGridTextColumn>
+						</DataGrid.Columns>
+					</DataGrid>
 
 					<!--Raw-->
 					<materialDesign:ColorZone Padding="10,5"
