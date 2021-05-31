@@ -64,7 +64,22 @@
                             </StackPanel>
                         </Button>
 
-                    </StackPanel>
+						<Button x:Name="MergeVersion"
+								Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+							<StackPanel Orientation="Horizontal">
+								<materialDesign:PackIcon Kind="Merge"
+														 VerticalAlignment="Center"
+														 Height="16"
+														 Width="16" />
+								<TextBlock Text="Merge Versions"
+										   VerticalAlignment="Center"
+										   Style="{StaticResource MaterialDesignTextBlock}"
+										   FontSize="10" />
+							</StackPanel>
+						</Button>
+
+					</StackPanel>
                 </materialDesign:ColorZone>
 
                 <ListBox 

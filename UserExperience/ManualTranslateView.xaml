@@ -227,7 +227,25 @@
 
 				<!-- MTL Panels -->
 				<materialDesign:DrawerHost.RightDrawerContent>
-					<Button>Right Drawer</Button>
+					<StackPanel Margin="10"
+								controls:Spacing.Vertical="10">
+						<TextBlock Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+								   Text="Machine Translation" />
+						<materialDesign:ColorZone Padding="10,5"
+												  Mode="PrimaryMid">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="DeepL" />
+						</materialDesign:ColorZone>
+
+						<materialDesign:ColorZone Padding="10,5"
+												  Mode="PrimaryMid">
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignBody2TextBlock}"
+									   Text="Google Translate" />
+						</materialDesign:ColorZone>
+
+					</StackPanel>
 				</materialDesign:DrawerHost.RightDrawerContent>
 			</materialDesign:DrawerHost>
 
@@ -249,6 +267,8 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 							<Button Style="{DynamicResource MaterialDesignToolButton}">
 								<materialDesign:PackIcon Kind="Search"
@@ -261,9 +281,21 @@
 									 BorderThickness="0"
 									 MinWidth="200"
 									 VerticalAlignment="Center" />
+							<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+									  Grid.Column="2"
+									  Margin="8 0 0 0"
+									  IsChecked="{Binding Path=SearchUntranslated}"
+									  Content="Untranslated" />
+
+							<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+									  Grid.Column="3"
+									  Margin="8 0 0 0"
+									  IsChecked="{Binding Path=SearchMerge}"
+									  Content="Merge Changes" />
+
 							<Button cal:Message.Attach="[Event Click] = [Action QuickSearch()]"
 									Style="{DynamicResource MaterialDesignToolButton}"
-									Grid.Column="2">
+									Grid.Column="4">
 								<materialDesign:PackIcon Kind="Send"
 														 Opacity=".56"
 														 Margin="8 0 0 0" />

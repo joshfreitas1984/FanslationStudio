@@ -94,6 +94,8 @@ namespace FanslationStudio.UserExperience
         private string _scratchZone;
         private string _quickFindTerm;
         private string _quickReplaceTerm;
+        private bool _searchUntranslated;
+        private bool _searchMerge;
 
         public List<ScriptTranslationItem> SearchResults
         {
@@ -183,6 +185,30 @@ namespace FanslationStudio.UserExperience
             {
                 _searchPatterns = value;
                 NotifyOfPropertyChange(() => SearchPatterns);
+            }
+        }
+        public bool SearchUntranslated
+        {
+            get
+            {
+                return _searchUntranslated;
+            }
+            set
+            {
+                _searchUntranslated = value;
+                NotifyOfPropertyChange(() => SearchUntranslated);
+            }
+        }
+        public bool SearchMerge
+        {
+            get
+            {
+                return _searchMerge;
+            }
+            set
+            {
+                _searchMerge = value;
+                NotifyOfPropertyChange(() => SearchMerge);
             }
         }
 
