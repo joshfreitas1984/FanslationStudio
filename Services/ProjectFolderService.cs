@@ -41,5 +41,10 @@ namespace FanslationStudio.Services
         {
             return $"{projectFolder}\\Output\\{version.Version}";
         }
+
+        public static string CalculateExportVersionFolder(string projectFolder, ProjectVersion version)
+        {
+            return $"{projectFolder}\\Export\\{version.Version}\\{DateTime.Now.ToString("yyyy-MM-dd-HHmmss")}";
+        }        
     }
 }

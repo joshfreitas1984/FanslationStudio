@@ -10,5 +10,18 @@ namespace FanslationStudio.Domain
         public string RawLine { get; set; }
 
         public List<ScriptTranslationItem> Items { get; set; }
+
+        public string ToExportLine(ScriptTranslationItem item)
+        {
+            string exportFormat = "<id={0} seq={1}/>{2}";
+
+            return string.Format(exportFormat,
+                LineId, item.ItemSequence, item.CleanedUpLine);
+        }
+
+        public void UpdateFromExportLine(string exportLine)
+        {
+
+        }
     }
 }

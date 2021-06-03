@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -325,114 +326,17 @@ namespace FanslationStudio.UserExperience
 
         public void QuickSearch()
         {
-            var foundResults = new ConcurrentBag<ScriptSearchResult>();
-
-            Parallel.ForEach(_scripts, scriptEntry =>
-            {
-                foreach (var script in scriptEntry.Value)
-                {
-                    foreach(var scriptItem in script.Items)
-                    {
-                        if (!scriptItem.RequiresTranslation)
-                            continue;
-
-                        string resultingTranslation = scriptItem.ResultingTranslation;
-                        if (resultingTranslation == scriptItem.Raw)
-                            resultingTranslation = string.Empty;
-
-                        //Add Merge Changes
-                        if (SearchMerge && scriptItem.MergeHadRawChanges)
-                            foundResults.Add(new ScriptSearchResult()
-                            {
-                                SourcePath = scriptEntry.Key,
-                                Script = script,
-                                Item = scriptItem,
-                            });
-                        //Add Untranslated
-                        else if (SearchUntranslated && !string.IsNullOrEmpty(scriptItem.Raw) && string.IsNullOrEmpty(resultingTranslation))
-                            foundResults.Add(new ScriptSearchResult()
-                            {
-                                SourcePath = scriptEntry.Key,
-                                Script = script,
-                                Item = scriptItem,
-                            });
-                        //Add found terms
-                        else if (!string.IsNullOrEmpty(_quickFindTerm) && resultingTranslation.Contains(_quickFindTerm))
-                            foundResults.Add(new ScriptSearchResult()
-                            {
-                                SourcePath = scriptEntry.Key,
-                                Script = script,
-                                Item = scriptItem,
-                                Find = QuickFindTerm,
-                            });
-                    }
-                }
-            });
-
+            var foundResults = SearchScriptService.QuickSearch(_scripts, SearchMerge, SearchUntranslated, QuickFindTerm);
             SearchResults = new ObservableCollection<ScriptSearchResult>(foundResults);
             ShowSearchPanel = false;                     
         }
 
         public void SearchWithPatterns()
         {
-            var foundResults = new ConcurrentBag<ScriptSearchResult>();
-
-            Parallel.ForEach(_scripts, scriptEntry =>
-            {
-                foreach (var script in scriptEntry.Value)
-                {
-                    foreach (var scriptItem in script.Items)
-                    {
-                        if (!scriptItem.RequiresTranslation)
-                            continue;
-
-                        string resultingTranslation = scriptItem.ResultingTranslation;
-                        if (resultingTranslation == scriptItem.Raw)
-                            resultingTranslation = string.Empty;
-
-                        foreach (var pattern in SearchPatterns)
-                        {
-                            if (FindPattern(resultingTranslation, pattern))
-                                foundResults.Add(new ScriptSearchResult()
-                                {
-                                    SourcePath = scriptEntry.Key,
-                                    Script = script,
-                                    Item = scriptItem,
-                                    Find = pattern.Find,
-                                    Replace = pattern.Replacement,
-                                });
-                        }
-                    }
-                }
-            });
-
+            var foundResults = SearchScriptService.SearchWithPatterns(_scripts, SearchPatterns.ToList()); 
             SearchResults = new ObservableCollection<ScriptSearchResult>(foundResults);
-
             WriteSearchPatterns();
             ShowSearchPanel = false;
-        }
-
-        private static bool FindPattern(string lineContent, SearchPattern pattern)
-        {
-            bool found;
-
-            //Regex matching is quite slow so lets just index of stuff that isnt a regex
-            if (pattern.IsRegex)
-            {
-                if (pattern.CaseSensitive)
-                    found = Regex.Match(lineContent, pattern.Find).Success;
-                else
-                    found = Regex.Match(lineContent, pattern.Find, RegexOptions.IgnoreCase).Success;
-            }
-            else
-            {
-                if (pattern.CaseSensitive)
-                    found = lineContent.IndexOf(pattern.Find, StringComparison.InvariantCulture) != -1;
-                else
-                    found = lineContent.IndexOf(pattern.Find, StringComparison.InvariantCultureIgnoreCase) != -1;
-            }
-
-            return found;
         }
 
         public Task HandleAsync(Events.DeeplTransEvent message, CancellationToken cancellationToken)
@@ -441,16 +345,10 @@ namespace FanslationStudio.UserExperience
 
             return Task.CompletedTask;
         }
-    }
-
-
-
-    public class ScriptSearchResult
-    {
-        public string SourcePath { get; set; }
-        public ScriptTranslation Script { get; set; }
-        public ScriptTranslationItem Item { get; set; }
-        public string Find { get; set; }
-        public string Replace { get; set; }
+        
+        public void ExportBatchFiles()
+        {
+            ExportFilesService.ExportBatchFiles(SearchResults.ToList(), _projectFolder, _version);
+        }
     }
 }

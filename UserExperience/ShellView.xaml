@@ -54,7 +54,7 @@
                 <TabItem x:Name="Project" Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="Auto">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Heart" Width="24" Height="24" />
+                            <materialDesign:PackIcon Kind="File" Width="24" Height="24" />
                             <TextBlock VerticalAlignment="Center" Margin="10,0">Project Details</TextBlock>
                         </StackPanel>
                     </TabItem.Header>
@@ -62,22 +62,31 @@
                 <TabItem x:Name="ManualTranslate" Style="{StaticResource MaterialDesignNavigationRailTabItem}" Width="Auto">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Spade" Width="24" Height="24" />
+                            <materialDesign:PackIcon Kind="Translate" Width="24" Height="24" />
                             <TextBlock VerticalAlignment="Center" Margin="10,0">Manual Translate</TextBlock>
                         </StackPanel>
                     </TabItem.Header>
                 </TabItem>
-            </TabControl>
+				<TabItem x:Name="ImportBatch"
+						 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+						 Width="Auto">
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<materialDesign:PackIcon Kind="Import"
+													 Width="24"
+													 Height="24" />
+							<TextBlock VerticalAlignment="Center"
+									   Margin="10,0">Import Batch</TextBlock>
+						</StackPanel>
+					</TabItem.Header>
+				</TabItem>
+			</TabControl>
 
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
-                <!-- Breadcrumbs area -->
-                <StackPanel>
-                </StackPanel>
 
                 <!-- Content -->
                 <ScrollViewer

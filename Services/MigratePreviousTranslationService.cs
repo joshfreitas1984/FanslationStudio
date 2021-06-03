@@ -7,7 +7,7 @@ using System.Text;
 
 namespace FanslationStudio.Services
 {
-    public static class MigrateGameTranslatorFormatService
+    public static class MigratePreviousTranslationService
     {
         //Lets Migrate the old HLTS files to new ones
         public static void MigrateGtRaws(Config config, Project project, ProjectVersion version)

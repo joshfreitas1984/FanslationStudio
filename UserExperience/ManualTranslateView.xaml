@@ -10,7 +10,7 @@
 			 xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
 			 xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
 			 mc:Ignorable="d"
-			 d:Width="1620"
+			 d:Width="1920"
 			 d:Height="980">
 
 	<Grid>
@@ -51,6 +51,20 @@
 								</StackPanel>
 							</Button>
 
+							<Button x:Name="ExportBatchFiles"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="Export"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Export Batch Files"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
 						</StackPanel>
 					</materialDesign:ColorZone>
 					<DataGrid ItemsSource="{Binding SearchResults}"

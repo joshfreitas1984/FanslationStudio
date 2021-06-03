@@ -126,5 +126,13 @@ namespace FanslationStudio.Services
         {
             return $"{translateFileFolder}\\{script.LineId}.json";
         }
+
+        public static string CalculateExportFileName(string folder, string sourcePath, int fileIndex)
+        {
+            return $"{folder}\\{sourcePath}.{fileIndex}.txt";
+        }
+
+
+
     }
 }

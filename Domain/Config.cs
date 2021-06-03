@@ -11,6 +11,7 @@ namespace FanslationStudio.Domain
         static string _fileName = "config.json";
 
         public string WorkshopFolder { get; set; }
+        public string LastProjectFile { get; set; }
         public List<SearchPattern> SearchPatterns { get; set; }
 
         public static Config LoadConfig()
@@ -47,22 +48,6 @@ namespace FanslationStudio.Domain
                 File.Delete(_fileName);
 
             File.WriteAllText(_fileName, jsonString);
-        }
-    }
-
-    public class SearchPattern
-    {
-        public string Find { set; get; }
-        public string Replacement { set; get; }
-        public bool CaseSensitive { set; get; }
-
-        [JsonIgnore]
-        public bool IsRegex
-        {
-            get
-            {
-                return (Find.Contains("[") || Find.Contains("^") || Find.Contains("/"));
-            }
         }
     }
 }
