@@ -131,8 +131,5 @@ namespace FanslationStudio.Services
         {
             return $"{folder}\\{sourcePath}.{fileIndex}.txt";
         }
-
-
-
     }
 }

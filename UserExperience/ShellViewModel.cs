@@ -105,7 +105,7 @@ namespace FanslationStudio.UserExperience
             string folder = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _currentVersion);
             _scripts = ScriptTranslationService.LoadTranslationsThatExist(_currentProject, folder);
 
-            SetTitle();
+            SetTitle();            
         }
 
         public void SetTitle()
@@ -127,6 +127,9 @@ namespace FanslationStudio.UserExperience
                     case "ManualTranslate":
                         ShowManualTranslate();
                         break;
+                    case "ImportBulk":
+                        ShowImportBulk();
+                        break;
                 }
             }
         }
@@ -144,6 +147,17 @@ namespace FanslationStudio.UserExperience
         public async void ShowManualTranslate()
         {
             var vm = IoC.Get<ManualTranslateViewModel>();
+            vm.Config = _config;
+            vm.Project = _currentProject;
+            vm.Version = _currentVersion;
+            vm.Scripts = _scripts;
+
+            await ActivateItemAsync(vm);
+        }
+
+        public async void ShowImportBulk()
+        {
+            var vm = IoC.Get<ImportBulkViewModel>();
             vm.Config = _config;
             vm.Project = _currentProject;
             vm.Version = _currentVersion;

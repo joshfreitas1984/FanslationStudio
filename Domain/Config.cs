@@ -12,6 +12,7 @@ namespace FanslationStudio.Domain
 
         public string WorkshopFolder { get; set; }
         public string LastProjectFile { get; set; }
+        public string LastImportFolder { get; set; }
         public List<SearchPattern> SearchPatterns { get; set; }
 
         public static Config LoadConfig()

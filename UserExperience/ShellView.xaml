@@ -67,7 +67,7 @@
                         </StackPanel>
                     </TabItem.Header>
                 </TabItem>
-				<TabItem x:Name="ImportBatch"
+				<TabItem x:Name="ImportBulk"
 						 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
 						 Width="Auto">
 					<TabItem.Header>

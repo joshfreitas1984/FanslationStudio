@@ -72,5 +72,46 @@ namespace FanslationStudio.Services
 
             File.WriteAllLines(file, exportItems);
         }
+
+        public static void ImportLines(Dictionary<string, List<ScriptTranslation>> scripts, string exportFolder)
+        {
+            var response = new List<ScriptTranslation>();
+
+            if (!Directory.Exists(exportFolder))
+                Directory.CreateDirectory(exportFolder);
+
+            foreach (var sourceFile in scripts)
+            {
+                string fileName = Path.GetFileName(sourceFile.Key);
+
+                //Get Export files that match
+                foreach (var file in Directory.GetFiles(exportFolder, $"{fileName}.*", SearchOption.AllDirectories))
+                {
+                    var lines = File.ReadAllLines(file);
+
+                    foreach (var line in lines)
+                    {
+                        //Skip blank lines
+                        if (string.IsNullOrEmpty(line))
+                            continue;
+
+                        //Get id
+                        int endIndex = line.IndexOf("/>");
+                        if (endIndex == 0)
+                            continue; 
+
+                        string lineTag = line.Substring(0, endIndex);
+                        var splits = lineTag.Split(" ");
+                        string lineId = splits[0].Replace("<id=", "");
+                        string sequence = splits[1].Replace("seq=", "");
+                        string translatedLine = line.Substring(endIndex + 2, line.Length - endIndex - 2);
+
+                        //Get item and update it
+                        var item = sourceFile.Value.Where(s => s.LineId == lineId).FirstOrDefault();
+                        item?.UpdateFromExportLine(translatedLine, Convert.ToInt32(sequence));
+                    }
+                }
+            }
+        }
     }
 }
