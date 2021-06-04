@@ -14,4 +14,16 @@
     <PackageReference Include="SharpClipboard" Version="3.5.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="UserExperience\GenerateOutputView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UserExperience\GenerateOutputView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

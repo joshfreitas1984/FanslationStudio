@@ -255,7 +255,8 @@ namespace FanslationStudio.UserExperience
             QuickReplaceTerm = item?.Replace;
             ScratchZone = string.Empty;
 
-            await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item?.Item.Raw));
+            if (item != null)
+                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item?.Item.CleanedUpLine));
         }
 
         public void ShowSearchFiles()

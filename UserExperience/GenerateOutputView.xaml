@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="FanslationStudio.UserExperience.GenerateOutputView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:FanslationStudio.UserExperience"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cal="http://www.caliburnproject.org"
+			 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+			 xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
+			 mc:Ignorable="d"
+			 d:DesignHeight="450"
+			 d:DesignWidth="800">
+
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVis" />
+	</UserControl.Resources>
+	
+	<Grid>
+		<StackPanel Margin="10"
+					controls:Spacing.Vertical="10">
+			<TextBlock Style="{StaticResource MaterialDesignHeadline3TextBlock}"
+					   Text="Generate Output" />
+
+			<Button x:Name="OuputFiles">
+				<StackPanel Orientation="Horizontal">
+					<materialDesign:PackIcon Kind="Export"
+											 VerticalAlignment="Center"
+											 Height="16"
+											 Width="16" />
+					<TextBlock Text="Ouput Version"
+							   VerticalAlignment="Center"
+							   Style="{StaticResource MaterialDesignTextBlock}"
+							   FontSize="10" />
+				</StackPanel>
+			</Button>
+
+			<Button x:Name="Loading"
+					Visibility="{Binding Path=IsOutputing, Converter={StaticResource BoolToVis}}"
+					Style="{StaticResource MaterialDesignFloatingActionButton}"
+					materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+					materialDesign:ButtonProgressAssist.Value="-1"
+					materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+					Content="{materialDesign:PackIcon DotsHorizontal}" />
+
+			<Button x:Name="Loaded"
+					Visibility="{Binding Path=IsOutputed, Converter={StaticResource BoolToVis}}"
+					Style="{StaticResource MaterialDesignFloatingActionButton}"
+					materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+					materialDesign:ButtonProgressAssist.Value="100"
+					Content="{materialDesign:PackIcon Tick}" />
+
+		</StackPanel>
+	</Grid>
+</UserControl>

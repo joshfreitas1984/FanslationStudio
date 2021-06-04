@@ -130,6 +130,9 @@ namespace FanslationStudio.UserExperience
                     case "ImportBulk":
                         ShowImportBulk();
                         break;
+                    case "GenerateOutput":
+                        ShowGenerateOutput();
+                        break;
                 }
             }
         }
@@ -158,6 +161,17 @@ namespace FanslationStudio.UserExperience
         public async void ShowImportBulk()
         {
             var vm = IoC.Get<ImportBulkViewModel>();
+            vm.Config = _config;
+            vm.Project = _currentProject;
+            vm.Version = _currentVersion;
+            vm.Scripts = _scripts;
+
+            await ActivateItemAsync(vm);
+        }
+
+        public async void ShowGenerateOutput()
+        {
+            var vm = IoC.Get<GenerateOutputViewModel>();
             vm.Config = _config;
             vm.Project = _currentProject;
             vm.Version = _currentVersion;

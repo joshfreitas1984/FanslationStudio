@@ -78,7 +78,7 @@ namespace FanslationStudio.Services
                         SplitCharacters = "\t",
                         SourcePath = @"TextAsset\CreatePlayerQuestionItem.txt",
                         SplitIndexes = new [] { 1 },
-                        OverrideFontSize = 18,
+                        //OverrideFontSize = 18,
                     },
                     new SplitTextFileToTranslate()
                     {
@@ -119,7 +119,7 @@ namespace FanslationStudio.Services
                         SplitCharacters = "\t",
                         SourcePath = @"TextAsset\HelpItem.txt",
                         SplitIndexes = new [] { 3, 4 },
-                        OverrideFontSize = 20,
+                        //OverrideFontSize = 20,
                     },
                     new SplitTextFileToTranslate()
                     {
@@ -152,7 +152,7 @@ namespace FanslationStudio.Services
                         SplitCharacters = "\t",
                         SourcePath = @"TextAsset\NpcItem.txt",
                         SplitIndexes = new [] { 1 },
-                        OverrideFontSize = 18,
+                        //OverrideFontSize = 16,
                     },
                     new SplitTextFileToTranslate()
                     {
@@ -161,7 +161,7 @@ namespace FanslationStudio.Services
                         SplitCharacters = "\t",
                         SourcePath = @"TextAsset\NpcTalkItem.txt",
                         SplitIndexes = new [] { 6 },
-                        OverrideFontSize = 20,
+                        OverrideFontSize = 16,
                     },
                     new SplitTextFileToTranslate()
                     {
@@ -219,7 +219,7 @@ namespace FanslationStudio.Services
                         SplitCharacters = "\t",
                         SourcePath = @"TextAsset\QuestItem.txt",
                         SplitIndexes = new [] { 1, 3 },
-                        OverrideFontSize = 18,
+                        //OverrideFontSize = 18,
                     },
                 }
             };

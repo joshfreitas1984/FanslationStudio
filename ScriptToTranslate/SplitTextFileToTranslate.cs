@@ -84,7 +84,17 @@ namespace FanslationStudio.ScriptToTranslate
 
                 foreach (var item in script.Items)
                 {
-                    line.Append(item.ResultingTranslation);
+                    var itemToAppend = item.ResultingTranslation;
+                    //Add Post Processing
+                    if (OverrideFontSize > 0 && item.RequiresTranslation)
+                    {
+                        if(!itemToAppend.StartsWith("<size="))
+                        {
+                            itemToAppend = $"<size={OverrideFontSize}>{itemToAppend}</size>";
+                        }
+                    }
+
+                    line.Append(itemToAppend);
                     line.Append(SplitCharacters);
                 }
 

@@ -37,6 +37,8 @@ namespace FanslationStudio.UserExperience
             _container.Singleton<ManualTranslateViewModel>();
             _container.Singleton<ImportBulkView>();
             _container.Singleton<ImportBulkViewModel>();
+            _container.Singleton<GenerateOutputView>();
+            _container.Singleton<GenerateOutputViewModel>();
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
