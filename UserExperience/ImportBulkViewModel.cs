@@ -151,7 +151,7 @@ namespace FanslationStudio.UserExperience
                     string translatedFolder = $"{translationFolderVersion}\\{script.Key}";
 
                     //Go through each script and add it if its missing
-                    ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, script.Value, false);
+                    ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, script.Value, true);
                 }
 
                 IsImported = true;
