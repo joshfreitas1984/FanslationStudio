@@ -28,7 +28,7 @@ namespace FanslationStudio.ScriptToTranslate
 
             //Force full read not stream
             var lines = File.ReadAllLines(rawFile).ToArray();
-            string lineId; 
+            string lineId;
 
             int lineNum = 0;
             foreach (var line in lines)
@@ -50,7 +50,7 @@ namespace FanslationStudio.ScriptToTranslate
                     Items = new List<ScriptTranslationItem>(),
                 };
 
-                for(int i = 0; i < lineSplits.Length; i++)
+                for (int i = 0; i < lineSplits.Length; i++)
                 {
                     var item = new ScriptTranslationItem()
                     {
@@ -69,7 +69,7 @@ namespace FanslationStudio.ScriptToTranslate
                 }
 
                 translations.Add(translation);
-            }           
+            }
 
             return translations;
         }
@@ -85,13 +85,11 @@ namespace FanslationStudio.ScriptToTranslate
                 foreach (var item in script.Items)
                 {
                     var itemToAppend = item.ResultingTranslation;
+
                     //Add Post Processing
-                    if (OverrideFontSize > 0 && item.RequiresTranslation)
+                    if (item.RequiresTranslation)
                     {
-                        if(!itemToAppend.StartsWith("<size="))
-                        {
-                            itemToAppend = $"<size={OverrideFontSize}>{itemToAppend}</size>";
-                        }
+                        itemToAppend = CleanupTranslatedFile(itemToAppend);
                     }
 
                     line.Append(itemToAppend);
@@ -169,6 +167,122 @@ namespace FanslationStudio.ScriptToTranslate
             //- this could be better or worse because line feeds might have been used to trim text not take it outta context
 
             return line;
+        }
+        public string CleanupTranslatedFile(string line)
+        {
+            //Do a little bit of content clean up so that we dont pick it up in stuff we need to manually do
+            var response = line
+                .Replace("0 >", "0>")
+                .Replace("< 0", "<0")
+                .Replace("<0>", "{0}")
+
+                .Replace("1 >", "1>")
+                .Replace("< 1", "<1")
+                .Replace("<1>", "{1}")
+
+                .Replace("2 >", "2>")
+                .Replace("< 2", "<2")
+                .Replace("<2>", "{2}")
+
+                .Replace("3 >", "3>")
+                .Replace("< 3", "<3")
+                .Replace("<3>", "{3}")
+
+                //Brackets
+                .Replace("[ >", "[>")
+                .Replace("< [", "<[")
+                .Replace(@"<[>", "[")
+                .Replace("] >", "]>")
+                .Replace("< ]", "<]")
+                .Replace(@"<]>", "]")
+                .Replace(@"[>", "[")
+                .Replace(@"<]", "]")
+                .Replace(@">]", "]")
+
+                //Messed up numbers
+                .Replace("{0th", "{0")
+                .Replace("{1st", "{1")
+                .Replace("{2nd", "{2")
+                .Replace("{0 ", "{0")
+                .Replace("{1 ", "{1")
+                .Replace("{2 ", "{2")
+                .Replace("{0: ", "{0:")
+                .Replace("{1: ", "{1:")
+                .Replace("{2: ", "{2:")
+                
+                //Name tags
+                .Replace(@"name_1 >", @"name_1>")
+                .Replace(@"<name_1", @"<name_1")
+                .Replace(@"<name_1>", @"{name_1}")
+                .Replace(@"name_2 >", @"name_2>")
+                .Replace(@"<name_2", @"<name_2")
+                .Replace(@"<name_2>", @"{name_2}")
+                
+                //...s
+                .Replace(@".........", "....")
+                .Replace(@"........", "....")
+                .Replace(@".......", "....")
+                .Replace(@".....", "....")
+                
+                .Trim();
+
+            //Shouldnt have any html tags left
+            var matches = Regex.Matches(response, @"<[^>]*>");
+
+            if (matches.Count() > 1)
+                Console.WriteLine(response);
+
+            //Put spaces after name tags
+            var nameWithoutSpace = Regex.Matches(response, @"({name_\d}[A-z])");
+
+            if (nameWithoutSpace.Count > 0)
+            {
+                foreach (var match in nameWithoutSpace.AsEnumerable())
+                {
+                    var start = match.Value.Substring(0, match.Length - 1);
+                    var end = match.Value.Substring(match.Length - 1, 1);
+                    string newReplace = $"{start} {end}";
+                    response = response.Replace(match.Value, newReplace);
+                }
+            }
+
+            //Add in Size override 
+            if (OverrideFontSize != 0)
+            {
+                //TODO: Move to config
+                var exclusions = new List<string>
+                {
+                    "Ade Ake",
+                    "Li Tan",
+                    "Qi Xiaoer",
+                    "Wang Zhe",
+                    "He Yuqing",
+                    "Duan Siping",
+                    "Duan Siliang",
+                    "He Ziwan",
+                    "Huang Shang",
+                    "Fan Xiangdie",
+                    "Bai Sun",
+                    "Fan Xiangdie",
+                    "Luo Yuanyu",
+                    "Zhang Junbao",
+                    "Yan Yushu",
+                    "Cheng Yanhua",
+                    "Situ Jing",
+                    "Zhuan Sun Ning",
+                    "Shi Hongtu"
+                };
+
+                if (!exclusions.Contains(response) && !response.StartsWith("<size="))
+                {
+                    response = $"<size={OverrideFontSize}>{response}</size>";
+                }
+            }
+
+            //Add in manual Spaces
+            response = response.Replace("<space>", " ");
+
+            return response;
         }
 
         public void WriteProgress(double lineCount, double currentLine)

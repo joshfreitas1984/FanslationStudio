@@ -111,6 +111,7 @@ namespace FanslationStudio.UserExperience
         public void OuputFiles()
         {            
             IsOutputing = true;
+            IsOutputed = false;
 
             Task.Run(() =>
             {

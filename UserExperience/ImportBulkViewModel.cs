@@ -141,6 +141,7 @@ namespace FanslationStudio.UserExperience
             string translationFolderVersion = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _version);
 
             IsImporting = true;
+            IsImported = false;
 
             Task.Run(() =>
             {
