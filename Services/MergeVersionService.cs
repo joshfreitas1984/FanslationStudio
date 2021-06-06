@@ -24,13 +24,13 @@ namespace FanslationStudio.Services
                 ScriptTranslation previousTrans = ScriptTranslationService.LoadIndividualScriptTranslation(oldFile);
                 ScriptTranslation newTrans = ScriptTranslationService.LoadIndividualScriptTranslation(newFile);
 
-                MergeVersions(previousTrans, newTrans);
+                MergeVersions(previousTrans, newTrans, newFile);
 
                 ScriptTranslationService.WriteIndividualScriptFile(Path.GetDirectoryName(newFile), newTrans, true);
             }
         }
 
-        private static void MergeVersions(ScriptTranslation previousVersionTrans, ScriptTranslation newVersionTrans)
+        private static void MergeVersions(ScriptTranslation previousVersionTrans, ScriptTranslation newVersionTrans, string newFile)
         {
             //WARNING: Will only work if the splits are the same
             for(int i = 0; i < previousVersionTrans.Items.Count; i++)
@@ -45,6 +45,14 @@ namespace FanslationStudio.Services
 
                     if (prevItem.Raw != newItem.Raw)
                         newItem.MergeHadRawChanges = true;
+
+                    ////Remove post processing -- sometimes we manually put sizes in
+                    //if (newItem.InitialTranslation.Contains("<size"))
+                    //    newItem.InitialTranslation = newItem.InitialTranslation
+                    //        .Replace("<size=18>", "")
+                    //        .Replace("<size=20>", "")
+                    //        .Replace("<size=16>", "")
+                    //        .Replace("</size>", "");
                 }
             }
         }

@@ -104,6 +104,29 @@ namespace FanslationStudio.UserExperience
             string projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _currentProject.Name);
             string folder = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _currentVersion);
             _scripts = ScriptTranslationService.LoadTranslationsThatExist(_currentProject, folder);
+            
+            //Remove Post Processing
+            //foreach (var script in _scripts)
+            //{
+            //    string translatedFolder = $"{folder}\\{script.Key}";
+
+            //    foreach (var item in script.Value)
+            //    {
+            //        foreach (var newItem in item.Items)
+            //        {
+            //            //Remove post processing
+            //            if (newItem.RequiresTranslation && newItem.InitialTranslation != null && newItem.InitialTranslation.Contains("<size"))
+            //                newItem.InitialTranslation = newItem.InitialTranslation
+            //                    .Replace("<size=18>", "")
+            //                    .Replace("<size=20>", "")
+            //                    .Replace("<size=16>", "")
+            //                    .Replace("</size>", "");
+            //        }
+            //    }
+
+            //    //Go through each script and add it if its missing
+            //    ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, script.Value, true);
+            //}
 
             SetTitle();            
         }
