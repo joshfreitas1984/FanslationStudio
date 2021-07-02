@@ -20,11 +20,11 @@ namespace FanslationStudio.Domain
         public bool OldGameTranslator { get; set; }
         public string GameTranslatorSource { get; set; }
 
-        public void CreateWorkspaceFolders(Config config, string name)
+        public void CreateWorkspaceFolders(Config config, Project project)
         {
             _config = config;
 
-            _projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, name);
+            _projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, project.Name);
             _rawFolderVersion = ProjectFolderService.CalculateRawVersionFolder(_projectFolder, this);
             _translationFolderVersion = ProjectFolderService.CalculateTranslationVersionFolder(_projectFolder, this);
 

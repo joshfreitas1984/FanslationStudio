@@ -59,6 +59,9 @@ namespace FanslationStudio.Services
                 var fileContents = new List<string>();
                 string folder = $"{translatedFolder}\\{scriptToTranslate.SourcePath}";
 
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+
                 foreach (var file in Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories))
                 {
                     fileContents.Add(File.ReadAllText(file));

@@ -7,121 +7,134 @@
 		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:cal="http://www.caliburnproject.org"
 		xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+		xmlns:dialogs="clr-namespace:FanslationStudio.UserExperience.Dialogs"
 		mc:Ignorable="d"
 		Title="{Binding Path=Title}"
 		WindowStartupLocation="CenterScreen"
 		Width="1920"
 		Height="1080">
-	<Grid>
-		<!--Header Menu-->
-		<DockPanel>
-			<materialDesign:ColorZone Padding="16"
-									  materialDesign:ShadowAssist.ShadowDepth="Depth2"
-									  Mode="PrimaryMid"
-									  DockPanel.Dock="Top">
 
-				<DockPanel>
-					<Button Style="{StaticResource MaterialDesignFloatingActionButton}"
-							materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
-							materialDesign:ButtonProgressAssist.Value="-1"
-							materialDesign:ButtonProgressAssist.IsIndeterminate="True"
-							Content="{materialDesign:PackIcon DotsHorizontal}" />
+	<materialDesign:DialogHost DialogTheme="Inherit"
+							   IsOpen="{Binding Path=IsDialogOpen, Mode=OneWay}">
+		<materialDesign:DialogHost.DialogContent>
+			<dialogs:LoadingProjectDialog />
+		</materialDesign:DialogHost.DialogContent>
+		
+		<Grid>
+			<!--Header Menu-->
+			<DockPanel>
+				<materialDesign:ColorZone Padding="16"
+										  materialDesign:ShadowAssist.ShadowDepth="Depth2"
+										  Mode="PrimaryMid"
+										  DockPanel.Dock="Top">
 
-					<Button Style="{StaticResource MaterialDesignFloatingActionButton}"
-							materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
-							materialDesign:ButtonProgressAssist.Value="100"
-							Content="{materialDesign:PackIcon Tick}" />
+					<DockPanel>
+						<TextBlock HorizontalAlignment="Center"
+								   VerticalAlignment="Center"
+								   Style="{StaticResource MaterialDesignHeadline3TextBlock}"
+								   Text="{Binding Path=Title}"
+								   d:Text="FanslationStudio: HLTS - version 1.0" />
+					</DockPanel>
+				</materialDesign:ColorZone>
 
-					<TextBlock HorizontalAlignment="Center"
-							   VerticalAlignment="Center"
-							   FontSize="22"
-							   Text="{Binding Path=Title}"
-							   d:Text="FanslationStudio: HLTS - version 1.0" />
-				</DockPanel>
-			</materialDesign:ColorZone>
+				<!-- Side Navigation -->
+				<TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+							cal:Message.Attach="[Event SelectionChanged] = [Action TabSelectionChanged($source)]"
+							materialDesign:ColorZoneAssist.Mode="Standard"
+							materialDesign:ShadowAssist.ShadowDepth="Depth0">
 
-			<!-- Side Navigation -->
-			<TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
-						cal:Message.Attach="[Event SelectionChanged] = [Action TabSelectionChanged($source)]"
-						materialDesign:ColorZoneAssist.Mode="Standard"
-						materialDesign:ShadowAssist.ShadowDepth="Depth0">
+					<TabItem x:Name="Home"
+							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+							 Width="200">
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal"
+										Width="200">
+								<materialDesign:PackIcon Kind="Home"
+														 Width="24"
+														 Height="24" />
+								<TextBlock VerticalAlignment="Center"
+										   Margin="10,0">Home</TextBlock>
+							</StackPanel>
+						</TabItem.Header>
+					</TabItem>
 
-				<TabItem x:Name="Project"
-						 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-						 Width="200">
-					<TabItem.Header>
-						<StackPanel Orientation="Horizontal"
-									Width="200">
-							<materialDesign:PackIcon Kind="File"
-													 Width="24"
-													 Height="24" />
-							<TextBlock VerticalAlignment="Center"
-									   Margin="10,0">Project Details</TextBlock>
-						</StackPanel>
-					</TabItem.Header>
-				</TabItem>
-				<TabItem x:Name="ManualTranslate"
-						 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-						 Width="200">
-					<TabItem.Header>
-						<StackPanel Orientation="Horizontal"
-									Width="200">
-							<materialDesign:PackIcon Kind="Translate"
-													 Width="24"
-													 Height="24" />
-							<TextBlock VerticalAlignment="Center"
-									   Margin="10,0">Manual Translate</TextBlock>
-						</StackPanel>
-					</TabItem.Header>
-				</TabItem>
-				<TabItem x:Name="ImportBulk"
-						 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-						 Width="200">
-					<TabItem.Header>
-						<StackPanel Orientation="Horizontal"
-									Width="200">
-							<materialDesign:PackIcon Kind="Import"
-													 Width="24"
-													 Height="24" />
-							<TextBlock VerticalAlignment="Center"
-									   Margin="10,0">Import Batch</TextBlock>
-						</StackPanel>
-					</TabItem.Header>
-				</TabItem>
-				<TabItem x:Name="GenerateOutput"
-						 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-						 Width="200">
-					<TabItem.Header>
-						<StackPanel Orientation="Horizontal"
-									Width="200">
-							<materialDesign:PackIcon Kind="Export"
-													 Width="24"
-													 Height="24" />
-							<TextBlock VerticalAlignment="Center"
-									   Margin="10,0">Generate Output</TextBlock>
-						</StackPanel>
-					</TabItem.Header>
-				</TabItem>
-			</TabControl>
+					<TabItem x:Name="Project"
+							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+							 Width="200">
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal"
+										Width="200">
+								<materialDesign:PackIcon Kind="File"
+														 Width="24"
+														 Height="24" />
+								<TextBlock VerticalAlignment="Center"
+										   Margin="10,0">Project Details</TextBlock>
+							</StackPanel>
+						</TabItem.Header>
+					</TabItem>
+					<TabItem x:Name="ManualTranslate"
+							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+							 Width="200">
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal"
+										Width="200">
+								<materialDesign:PackIcon Kind="Translate"
+														 Width="24"
+														 Height="24" />
+								<TextBlock VerticalAlignment="Center"
+										   Margin="10,0">Manual Translate</TextBlock>
+							</StackPanel>
+						</TabItem.Header>
+					</TabItem>
+					<TabItem x:Name="ImportBulk"
+							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+							 Width="200">
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal"
+										Width="200">
+								<materialDesign:PackIcon Kind="Import"
+														 Width="24"
+														 Height="24" />
+								<TextBlock VerticalAlignment="Center"
+										   Margin="10,0">Import Batch</TextBlock>
+							</StackPanel>
+						</TabItem.Header>
+					</TabItem>
+					<TabItem x:Name="GenerateOutput"
+							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
+							 Width="200">
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal"
+										Width="200">
+								<materialDesign:PackIcon Kind="Export"
+														 Width="24"
+														 Height="24" />
+								<TextBlock VerticalAlignment="Center"
+										   Margin="10,0">Generate Output</TextBlock>
+							</StackPanel>
+						</TabItem.Header>
+					</TabItem>
+				</TabControl>
 
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
 
-				<!-- Content -->
-				<ScrollViewer x:Name="MainScrollViewer"
-							  Grid.Row="1"
-							  materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True">
+					<!-- Content -->
+					<ScrollViewer x:Name="MainScrollViewer"
+								  Grid.Row="1"
+								  materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True">
 
-					<ContentControl x:Name="ActiveItem" />
-				</ScrollViewer>
+						<ContentControl x:Name="ActiveItem" />
+					</ScrollViewer>
 
-				<materialDesign:Snackbar x:Name="MainSnackbar"
-										 MessageQueue="{materialDesign:MessageQueue}"
-										 Grid.Row="1" />
-			</Grid>
-		</DockPanel>
-	</Grid>
+					<materialDesign:Snackbar x:Name="MainSnackbar"
+											 MessageQueue="{materialDesign:MessageQueue}"
+											 Grid.Row="1" />
+				</Grid>
+			</DockPanel>
+		</Grid>
+	</materialDesign:DialogHost>
 </Window>

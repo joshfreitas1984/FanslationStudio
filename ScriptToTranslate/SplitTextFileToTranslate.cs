@@ -11,7 +11,7 @@ namespace FanslationStudio.ScriptToTranslate
     public class SplitTextFileToTranslate : IScriptToTranslate
     {
         public string SourcePath { get; set; }
-        public int[] SplitIndexes { get; set; }
+        public List<int> SplitIndexes { get; set; }
         public string SplitCharacters { get; set; }
 
         //If false use line id

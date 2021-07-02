@@ -1,10 +1,12 @@
 ﻿using Caliburn.Micro;
 using FanslationStudio.Domain;
 using FanslationStudio.Services;
+using FanslationStudio.UserExperience.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,13 +14,29 @@ using System.Windows.Controls;
 namespace FanslationStudio.UserExperience
 {
 
-    public class ShellViewModel : Conductor<object>
+    public class ShellViewModel : Conductor<object>, IHandle<SelectProjectEvent>, IHandle<SelectProjectVersionEvent>, IHandle<ImportProjectVersionEvent>
     {
+        private IEventAggregator _eventAggregator;
         private Config _config;
         private Project _currentProject;
         private ProjectVersion _currentVersion;
-        private string _title = "Fanslation Studio - Loading...";
+        private string _title = "Fanslation Studio - Select a Project";
         private Dictionary<string, List<ScriptTranslation>> _scripts;
+        private bool _isDialogOpen;
+        private TabItem _selectedTabItem;
+
+        public bool IsDialogOpen
+        {
+            get
+            {
+                return _isDialogOpen;
+            }
+            set
+            {
+                _isDialogOpen = value;
+                NotifyOfPropertyChange(() => IsDialogOpen);
+            }
+        }
 
         public string Title
         {
@@ -33,8 +51,10 @@ namespace FanslationStudio.UserExperience
             }
         }
 
-        public ShellViewModel()
+        public ShellViewModel(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
+            _eventAggregator.SubscribeOnPublishedThread(this);
         }
 
         protected override void OnViewLoaded(object view)
@@ -42,98 +62,50 @@ namespace FanslationStudio.UserExperience
             _config = Config.LoadConfig();
             _config.WriteConfig();
 
-            //Start Loading on a background thread
-            Task.Run(() =>
-            {
-                if (!string.IsNullOrEmpty(_config.LastProjectFile))
-                {
-                    SelectProject(_config.LastProjectFile);
-                }
-                else
-                {
-                    var openFileDialog = new System.Windows.Forms.OpenFileDialog()
-                    {
-                        InitialDirectory = _config.WorkshopFolder,
-                        Filter = "Project files (*.project)|*.project|All files (*.*)|*.*",
-                    };
+            ShowHome();
+        }     
 
-                    if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        SelectProject(openFileDialog.FileName);
-                }
-
-                _currentProject.CreateWorkspaceFolder(_config);
-
-                ShowProject();
-            });
-
-            //Testing logic
-            //foreach (var version in _currentProject.Versions)
-            //{
-            //    //version.CopyRawsIntoWorkspaceFolder();
-            //    //version.ImportRawLinesAsTranslations(_currentProject);
-
-            //    //var x = version.LoadTranslationsThatExist(_currentProject);
-
-            //    // if (version.OldGameTranslator)
-            //    //    MigrateGameTranslatorFormatService.MigrateGtRaws(_config, _currentProject, version);
-
-            //    //version.GenerateOutput(_currentProject);
-            //}
-
-            //Migrate 1.29 to 1.33
-            //MergeVersionService.MergeOldVersion(_config, _currentProject, 
-            //    _currentProject.Versions[0], _currentProject.Versions[1]);
-        }
-
-        public void SelectProject(string fileName)
+        public void SelectProject(Project project)
         {
-            _currentProject = Project.LoadProjectFile(fileName);
-            _currentProject.CreateWorkspaceFolder(_config);
-
+            _currentProject = project;
             SelectVersion(_currentProject.Versions.Last());
 
             //Save last config file
-            _config.LastProjectFile = fileName;
+            _config.LastProjectFile = _currentProject.ProjectFile;
             _config.WriteConfig();
         }
 
         public void SelectVersion(ProjectVersion version)
         {
             _currentVersion = version;
+            IsDialogOpen = true;
 
-            string projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _currentProject.Name);
-            string folder = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _currentVersion);
-            _scripts = ScriptTranslationService.LoadTranslationsThatExist(_currentProject, folder);
-            
-            //Remove Post Processing
-            //foreach (var script in _scripts)
-            //{
-            //    string translatedFolder = $"{folder}\\{script.Key}";
+            Task.Run(() =>
+            {
+                string projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _currentProject.Name);
+                string folder = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _currentVersion);
+                _scripts = ScriptTranslationService.LoadTranslationsThatExist(_currentProject, folder);
 
-            //    foreach (var item in script.Value)
-            //    {
-            //        foreach (var newItem in item.Items)
-            //        {
-            //            //Remove post processing
-            //            if (newItem.RequiresTranslation && newItem.InitialTranslation != null && newItem.InitialTranslation.Contains("<size"))
-            //                newItem.InitialTranslation = newItem.InitialTranslation
-            //                    .Replace("<size=18>", "")
-            //                    .Replace("<size=20>", "")
-            //                    .Replace("<size=16>", "")
-            //                    .Replace("</size>", "");
-            //        }
-            //    }
+                Title = $"FanslationStudio :: {_currentProject.Name} - Version: {_currentVersion.Version}";
 
-            //    //Go through each script and add it if its missing
-            //    ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, script.Value, true);
-            //}
-
-            SetTitle();            
+                Thread.Sleep(500); //Avoid flicker
+                IsDialogOpen = false;
+            });            
         }
 
-        public void SetTitle()
-        {
-            Title = $"FanslationStudio :: {_currentProject.Name} - Version: {_currentVersion.Version}";
+        public void ImportVersion(ProjectVersion version)
+        {            
+            IsDialogOpen = true;
+
+            Task.Run(() =>
+            {
+                version.CreateWorkspaceFolders(_config, _currentProject);
+                version.CopyRawsIntoWorkspaceFolder();
+                version.ImportRawLinesAsTranslations(_currentProject);
+
+                Thread.Sleep(500); //Avoid flicker
+                IsDialogOpen = false;
+            });            
         }
 
         //Method to handle navigation because we cant get caliburn to pipe through
@@ -141,9 +113,14 @@ namespace FanslationStudio.UserExperience
         {
             if (args is TabControl)
             {
-                string name = ((args as TabControl).SelectedItem as TabItem).Name;
+                _selectedTabItem = ((args as TabControl).SelectedItem as TabItem);
+                string name = _selectedTabItem.Name;
+
                 switch (name)
                 {
+                    case "Home":
+                        ShowHome();
+                        break;
                     case "Project":
                         ShowProject();
                         break;
@@ -158,6 +135,14 @@ namespace FanslationStudio.UserExperience
                         break;
                 }
             }
+        }
+
+        public async void ShowHome()
+        {
+            var vm = IoC.Get<HomeViewModel>();
+            vm.Config = _config;
+
+            await ActivateItemAsync(vm);
         }
 
         public async void ShowProject()
@@ -201,6 +186,26 @@ namespace FanslationStudio.UserExperience
             vm.Scripts = _scripts;
 
             await ActivateItemAsync(vm);
+        }
+
+        public async Task HandleAsync(SelectProjectEvent message, CancellationToken cancellationToken)
+        {
+            SelectProject(message.SelectedProject);
+            ShowProject();
+
+            await Task.CompletedTask;
+        }
+
+        public async Task HandleAsync(SelectProjectVersionEvent message, CancellationToken cancellationToken)
+        {
+            SelectVersion(message.SelectedVersion);
+            await Task.CompletedTask;
+        }
+
+        public async Task HandleAsync(ImportProjectVersionEvent message, CancellationToken cancellationToken)
+        {
+            ImportVersion(message.SelectedVersion);
+            await Task.CompletedTask;
         }
     }
 }

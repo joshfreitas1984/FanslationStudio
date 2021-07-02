@@ -7,11 +7,6 @@ namespace FanslationStudio.UserExperience.Events
 {
     public class SelectProjectEvent
     {
-        Project SelectedProject { get; set; }
-    }
-
-    public class SelectProjectVersionEvent
-    {
-        ProjectVersion SelectedVersion { get; set; }
+        public Project SelectedProject { get; set; }
     }
 }

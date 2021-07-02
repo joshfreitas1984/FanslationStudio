@@ -63,7 +63,7 @@ namespace FanslationStudio.UserExperience
 
             //Wait for the Page to finish loading
             if (e.IsLoading == false)
-            {                
+            {
                 //Translator1.ExecuteScriptAsync("alert('All Resources Have Loaded');");
                 EvaluateDeepLTranslation();
             }
@@ -81,7 +81,7 @@ namespace FanslationStudio.UserExperience
             var task = frame.EvaluateScriptAsync(
                 "(function() { " +
                 "   return document.getElementsByClassName('lmt__textarea lmt__target_textarea lmt__textarea_base_style')[0].value; " +
-                "})();", null);
+                "})();");
 
             await task.ContinueWith(async t =>
             {

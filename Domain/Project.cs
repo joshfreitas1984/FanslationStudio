@@ -8,15 +8,14 @@ namespace FanslationStudio.Domain
     public class Project
     {
         private Config _config;
-        private string _projectFile;
 
         public string Name { get; set; }
 
-        public IScriptToTranslate[] ScriptsToTranslate { get; set; }
+        public List<IScriptToTranslate> ScriptsToTranslate { get; set; }
 
         public List<ProjectVersion> Versions { get; set; }
 
-        public string ProjectFile {  get { return _projectFile;  } }
+        public string ProjectFile { get; set; }
 
         /// <summary>
         /// Loads project file for JSON file and returns project object
@@ -28,11 +27,16 @@ namespace FanslationStudio.Domain
 
             string contents = File.ReadAllText(fileName);
 
-            return JsonConvert.DeserializeObject<Project>(contents,
+            var result =  JsonConvert.DeserializeObject<Project>(contents,
                 new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Objects
                 });
+
+            //Override the file name in case we copied it
+            result.ProjectFile = fileName;
+
+            return result;
         }
 
         /// <summary>
@@ -48,21 +52,23 @@ namespace FanslationStudio.Domain
                     TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
                 });
 
-            if (File.Exists(_projectFile))
-                File.Delete(_projectFile);
+            if (File.Exists(ProjectFile))
+                File.Delete(ProjectFile);
 
-            File.WriteAllText(_projectFile, jsonString);
+            File.WriteAllText(ProjectFile, jsonString);
         }
 
         public void CreateWorkspaceFolder(Config config)
         {
             _config = config;
-            _projectFile = $"{_config.WorkshopFolder}\\{Name}.project";
+
+            //Initialise Project file in the workshop folder
+            ProjectFile = $"{_config.WorkshopFolder}\\{Name}.project";
 
             foreach (var version in Versions)
             {
-                version.CreateWorkspaceFolders(_config, Name);
+                version.CreateWorkspaceFolders(_config, this);
             }
-        }
+        }        
     }
 }
