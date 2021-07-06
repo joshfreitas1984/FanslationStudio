@@ -24,7 +24,7 @@ namespace FanslationStudio.UserExperience
         private ProjectVersion _currentVersion;
         private string _title = "Fanslation Studio - Select a Project";
         private Dictionary<string, List<ScriptTranslation>> _scripts;       
-        private TabItem _selectedTabItem;       
+        
         public string Title
         {
             get
@@ -35,6 +35,14 @@ namespace FanslationStudio.UserExperience
             {
                 _title = value;
                 NotifyOfPropertyChange(() => Title);
+            }
+        }
+
+        public bool HasProjectVersion
+        {
+            get
+            {
+                return (_currentVersion != null);
             }
         }
 
@@ -77,6 +85,7 @@ namespace FanslationStudio.UserExperience
 
                 Thread.Sleep(500); //Avoid flicker
                 IsLoadingProjectDialogOpen = false;
+                NotifyOfPropertyChange(() => HasProjectVersion);
             });            
         }
 
@@ -148,25 +157,21 @@ namespace FanslationStudio.UserExperience
         }
 
         //Method to handle navigation because we cant get caliburn to pipe through
-        public void TabSelectionChanged(object args)
+        public void TabSelectionChanged(TabControl tabControl)
         {
-            if (args is TabControl)
-            {
-                _selectedTabItem = ((args as TabControl).SelectedItem as TabItem);
-                string name = _selectedTabItem.Name;
+            var name = (tabControl.SelectedItem as TabItem)?.Name;
 
-                switch (name)
-                {
-                    case "Home":
-                        ShowHome();
-                        break;
-                    case "Project":
-                        ShowProject();
-                        break;
-                    case "ManualTranslate":
-                        ShowManualTranslate();
-                        break;
-                }
+            switch (name)
+            {
+                case "Home":
+                    ShowHome();
+                    break;
+                case "Project":
+                    ShowProject();
+                    break;
+                case "ManualTranslate":
+                    ShowManualTranslate();
+                    break;
             }
         }
 
@@ -176,6 +181,7 @@ namespace FanslationStudio.UserExperience
             vm.Config = _config;
 
             await ActivateItemAsync(vm);
+            await _eventAggregator.PublishOnUIThreadAsync(new SelectTabForViewEvent("Home"));
         }
 
         public async void ShowProject()
@@ -186,6 +192,7 @@ namespace FanslationStudio.UserExperience
             vm.Version = _currentVersion;
 
             await ActivateItemAsync(vm);
+            await _eventAggregator.PublishOnUIThreadAsync(new SelectTabForViewEvent("Project"));
         }
 
         public async void ShowManualTranslate()
@@ -197,6 +204,7 @@ namespace FanslationStudio.UserExperience
             vm.Scripts = _scripts;
 
             await ActivateItemAsync(vm);
+            await _eventAggregator.PublishOnUIThreadAsync(new SelectTabForViewEvent("ManualTranslate"));
         }
 
         public async Task HandleAsync(SelectProjectEvent message, CancellationToken cancellationToken)

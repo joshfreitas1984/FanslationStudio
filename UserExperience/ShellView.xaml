@@ -38,7 +38,8 @@
 				</materialDesign:ColorZone>
 
 				<!-- Side Navigation -->
-				<TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+				<TabControl x:Name="ShellTabs" 
+							Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
 							cal:Message.Attach="[Event SelectionChanged] = [Action TabSelectionChanged($source)]"
 							materialDesign:ColorZoneAssist.Mode="Standard"
 							materialDesign:ShadowAssist.ShadowDepth="Depth0">
@@ -59,6 +60,7 @@
 					</TabItem>
 
 					<TabItem x:Name="Project"
+							 IsEnabled="{Binding HasProjectVersion}"
 							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
 							 Width="200">
 						<TabItem.Header>
@@ -73,6 +75,7 @@
 						</TabItem.Header>
 					</TabItem>
 					<TabItem x:Name="ManualTranslate"
+							 IsEnabled="{Binding HasProjectVersion}"
 							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
 							 Width="200">
 						<TabItem.Header>
