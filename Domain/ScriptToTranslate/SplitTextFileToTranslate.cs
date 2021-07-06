@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace FanslationStudio.ScriptToTranslate
+namespace FanslationStudio.Domain.ScriptToTranslate
 {
     public class SplitTextFileToTranslate : IScriptToTranslate
     {
@@ -33,6 +33,10 @@ namespace FanslationStudio.ScriptToTranslate
             int lineNum = 0;
             foreach (var line in lines)
             {
+                //Skip empties
+                if (string.IsNullOrEmpty(line))
+                    continue;
+
                 var lineSplits = line.Split(SplitCharacters);
                 lineNum++;
 
@@ -131,6 +135,14 @@ namespace FanslationStudio.ScriptToTranslate
             //Encase /n and /t with <>        
             var removePatterns = new[] {
                 @"<[^>]*>",
+                @"{color[^}]*}", @"{/color[^}]*}", @"{\\color[^}]*}",
+                @"{size[^}]*}", @"{/size[^}]*}", @"{\\size[^}]*}",
+                @"{back[^}]*}", @"{/back[^}]*}", @"{\\back[^}]*}",
+                @"{vpunch[^}]*}", @"{/vpunch[^}]*}", @"{\\vpunch[^}]*}",
+                @"{punch[^}]*}", @"{/punch[^}]*}", @"{\\punch[^}]*}",
+                @"{shake[^}]*}", @"{/shake[^}]*}", @"{\\shake[^}]*}",
+                @"{w[^}]*}", @"{/w[^}]*}", @"{\\w[^}]*}", //needs to be last
+                @"{s[^}]*}", @"{/s[^}]*}", @"{\\s[^}]*}", //needs to be last
             };
 
             foreach (var pattern in removePatterns)
@@ -148,7 +160,6 @@ namespace FanslationStudio.ScriptToTranslate
             }
 
             line = line
-                .Replace(@"\n", @"<\n>")
                 .Replace(@"\n", @"<\n>")
                 .Replace(@"\t", @"<\t>")
                 .Replace(@"{p}", "")
@@ -168,6 +179,7 @@ namespace FanslationStudio.ScriptToTranslate
 
             return line;
         }
+
         public string CleanupTranslatedFile(string line)
         {
             //Do a little bit of content clean up so that we dont pick it up in stuff we need to manually do
@@ -187,6 +199,8 @@ namespace FanslationStudio.ScriptToTranslate
                 .Replace("3 >", "3>")
                 .Replace("< 3", "<3")
                 .Replace("<3>", "{3}")
+                .Replace("<<", "<")
+                .Replace(">>", ">")
 
                 //Brackets
                 .Replace("[ >", "[>")
@@ -209,7 +223,7 @@ namespace FanslationStudio.ScriptToTranslate
                 .Replace("{0: ", "{0:")
                 .Replace("{1: ", "{1:")
                 .Replace("{2: ", "{2:")
-                
+
                 //Name tags
                 .Replace(@"name_1 >", @"name_1>")
                 .Replace(@"<name_1", @"<name_1")
@@ -217,19 +231,25 @@ namespace FanslationStudio.ScriptToTranslate
                 .Replace(@"name_2 >", @"name_2>")
                 .Replace(@"<name_2", @"<name_2")
                 .Replace(@"<name_2>", @"{name_2}")
-                
+
                 //...s
                 .Replace(@".........", "....")
                 .Replace(@"........", "....")
                 .Replace(@".......", "....")
                 .Replace(@".....", "....")
-                
+
+                //Add in manual Spaces
+                .Replace("<space>", " ")
+
+                .Replace(@"<\n>", @"\n")
+                .Replace(@"<\t>", @"\t")
+
                 .Trim();
 
             //Shouldnt have any html tags left
             var matches = Regex.Matches(response, @"<[^>]*>");
 
-            if (matches.Count() > 1)
+            if (matches.Count() > 0)
                 Console.WriteLine(response);
 
             //Put spaces after name tags
@@ -279,8 +299,7 @@ namespace FanslationStudio.ScriptToTranslate
                 }
             }
 
-            //Add in manual Spaces
-            response = response.Replace("<space>", " ");
+
 
             return response;
         }

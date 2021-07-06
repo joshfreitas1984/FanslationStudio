@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using CefSharp;
+using FanslationStudio.UserExperience.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +23,7 @@ namespace FanslationStudio.UserExperience
     /// <summary>
     /// Interaction logic for ManualTranslateView.xaml
     /// </summary>
-    public partial class ManualTranslateView : UserControl, IHandle<Events.RawLineCopiedEvent>
+    public partial class ManualTranslateView : UserControl, IHandle<RawLineCopiedEvent>, IHandle<RequestDeeplResult>
     {
         private string _lastValidTranslation;
         private IEventAggregator _eventAggregator;
@@ -46,26 +47,18 @@ namespace FanslationStudio.UserExperience
 
         private void GoogleTranslate_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            GoogleTranslate.SetZoomLevel(PercentageToToZoomLevel(80));
+            GoogleTranslate.SetZoomLevel(PercentageToToZoomLevel(75));
         }
 
-        public Task HandleAsync(Events.RawLineCopiedEvent message, CancellationToken cancellationToken)
+        private async void DeepLTranslate_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            string encoded = UrlEncoder.Create().Encode(message.RawLine);
-            DeepLTranslate.Address = $"https://www.deepl.com/translator#zh/en/{encoded}";
-            GoogleTranslate.Address = $"https://translate.google.com/#view=home&op=translate&sl=zh-CN&tl=en&text={encoded}";
-            return Task.CompletedTask;
-        }
-
-        private void DeepLTranslate_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
-        {
-            DeepLTranslate.SetZoomLevel(PercentageToToZoomLevel(80));
+            DeepLTranslate.SetZoomLevel(PercentageToToZoomLevel(75));
 
             //Wait for the Page to finish loading
             if (e.IsLoading == false)
             {
                 //Translator1.ExecuteScriptAsync("alert('All Resources Have Loaded');");
-                EvaluateDeepLTranslation();
+                await EvaluateDeepLTranslation();
             }
         }
 
@@ -74,14 +67,12 @@ namespace FanslationStudio.UserExperience
             Debug.WriteLine(e.Message.ToString());
         }
 
-        public async void EvaluateDeepLTranslation()
+        public async Task EvaluateDeepLTranslation()
         {
             var frame = DeepLTranslate.GetMainFrame();
 
             var task = frame.EvaluateScriptAsync(
-                "(function() { " +
-                "   return document.getElementsByClassName('lmt__textarea lmt__target_textarea lmt__textarea_base_style')[0].value; " +
-                "})();");
+                "(function() { return document.getElementsByClassName('lmt__textarea lmt__target_textarea lmt__textarea_base_style')[0].value; })();", null);
 
             await task.ContinueWith(async t =>
             {
@@ -94,11 +85,30 @@ namespace FanslationStudio.UserExperience
 
                     if (!string.IsNullOrEmpty(result) || result != _lastValidTranslation)
                     {
-                        await _eventAggregator.PublishOnUIThreadAsync(new Events.DeeplTransEvent(result));
+                        await _eventAggregator.PublishOnUIThreadAsync(new DeeplTransEvent(result));
                         _lastValidTranslation = result;
                     }
                 }
             });
+
+            await Task.CompletedTask;
+        }
+
+        public Task HandleAsync(RawLineCopiedEvent message, CancellationToken cancellationToken)
+        {
+            string encoded = UrlEncoder.Create().Encode(message.RawLine);
+            string sourceLanguageCode = message.SourceLanguageCode; //Might need to map these in future
+            string targetLanguageCode = message.TargetLanguageCode;
+
+            DeepLTranslate.Address = $"https://www.deepl.com/translator#{sourceLanguageCode}/{targetLanguageCode}/{encoded}";
+            GoogleTranslate.Address = $"https://translate.google.com/#view=home&op=translate&sl={sourceLanguageCode}&tl={targetLanguageCode}&text={encoded}";
+            return Task.CompletedTask;
+        }
+
+        public async Task HandleAsync(RequestDeeplResult message, CancellationToken cancellationToken)
+        {
+            //Try now and hit the browser
+            await EvaluateDeepLTranslation();
         }
     }
 }

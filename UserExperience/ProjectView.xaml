@@ -18,9 +18,28 @@
 
 	<materialDesign:DialogHost DialogTheme="Inherit"
 							   IsOpen="{Binding Path=IsDialogOpen, Mode=OneWay}">
+
+		<materialDesign:DialogHost.DialogContent>
+			<StackPanel>
+				<!-- Version Dialog -->
+				<dialogs:VersionDialog Visibility="{Binding Path=IsVersionDialogOpen, Converter={StaticResource BoolToVis}}" />
+
+				<!-- Script To Translate Dialog -->
+				<dialogs:SplitTextFileToTranslateDialog Visibility="{Binding Path=IsScriptDialogOpen, Converter={StaticResource BoolToVis}}" />
+
+				<!-- PrePocessing Dialog -->
+				<dialogs:PreFindReplaceDialog Visibility="{Binding Path=IsPreProcessingDialogOpen, Converter={StaticResource BoolToVis}}" />
+
+				<!-- PostPocessing Dialog -->
+				<dialogs:PostFindReplaceDialog Visibility="{Binding Path=IsPostProcessingDialogOpen, Converter={StaticResource BoolToVis}}" />
+
+				<!-- PostPocessing Dialog -->
+				<dialogs:BulkImportFileDialog Visibility="{Binding Path=IsBulkImportFileDialogOpen, Converter={StaticResource BoolToVis}}" />
+			</StackPanel>
+		</materialDesign:DialogHost.DialogContent>
+
 		<Grid>
-			<StackPanel Margin="16"
-						controls:Spacing.Vertical="16">
+			<StackPanel Margin="16">
 				<TextBlock Style="{StaticResource MaterialDesignHeadline3TextBlock}"
 						   Text="{Binding Path=ProjectName, FallbackValue=Project}" />
 
@@ -34,6 +53,7 @@
 				<!-- Versions -->
 				<StackPanel>
 					<materialDesign:ColorZone Padding="10,5"
+											  Margin ="0, 16, 0, 0"
 											  Mode="PrimaryMid">
 
 						<StackPanel Orientation="Horizontal">
@@ -49,7 +69,7 @@
 															 VerticalAlignment="Center"
 															 Height="16"
 															 Width="16" />
-									<TextBlock Text="Add Version"
+									<TextBlock Text="Add"
 											   VerticalAlignment="Center"
 											   Style="{StaticResource MaterialDesignTextBlock}"
 											   FontSize="10" />
@@ -95,6 +115,17 @@
 																 Width="16" />
 									</Button>
 
+									<Button cal:Message.Attach="[Event Click] = [Action DeleteVersion($this)]"
+											ToolTip="Delete "
+											Style="{StaticResource MaterialDesignToolButton}">
+
+										<materialDesign:PackIcon Kind="Delete"
+																 Height="16"
+																 Width="16" />
+									</Button>
+									
+									<!-- TODO Move to an Elipsis menu -->
+
 									<Button cal:Message.Attach="[Event Click] = [Action LoadVersion($this)]"
 											ToolTip="Load Version for use"
 											Style="{StaticResource MaterialDesignToolButton}">
@@ -113,11 +144,20 @@
 																 Width="16" />
 									</Button>
 
-									<Button cal:Message.Attach="[Event Click] = [Action DeleteVersion($this)]"
-											ToolTip="Delete Version"
+									<Button cal:Message.Attach="[Event Click] = [Action ImportBulkFiles($this)]"
+											ToolTip="Import Bulk Files into version"
 											Style="{StaticResource MaterialDesignToolButton}">
 
-										<materialDesign:PackIcon Kind="Delete"
+										<materialDesign:PackIcon Kind="FileImport"
+																 Height="16"
+																 Width="16" />
+									</Button>
+
+									<Button cal:Message.Attach="[Event Click] = [Action OutputVersion($this)]"
+											ToolTip="Output combined file to project folder"
+											Style="{StaticResource MaterialDesignToolButton}">
+
+										<materialDesign:PackIcon Kind="Export"
 																 Height="16"
 																 Width="16" />
 									</Button>
@@ -127,9 +167,194 @@
 					</ListBox>
 				</StackPanel>
 
+				
+
+				<!-- Pre Processing -->
+				<materialDesign:ColorZone Padding="10,5"
+										  Margin="0, 16, 0, 0"
+										  Mode="PrimaryMid">
+
+					<StackPanel Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center"
+								   Style="{StaticResource MaterialDesignBody2TextBlock}"
+								   Text="Line Pre-Processing" />
+
+						<Button x:Name="AddPreProcessing"
+								Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+							<StackPanel Orientation="Horizontal">
+								<materialDesign:PackIcon Kind="Add"
+														 VerticalAlignment="Center"
+														 Height="16"
+														 Width="16" />
+								<TextBlock Text="Add"
+										   VerticalAlignment="Center"
+										   Style="{StaticResource MaterialDesignTextBlock}"
+										   FontSize="10" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+				</materialDesign:ColorZone>
+
+				<DataGrid ItemsSource="{Binding PreProcessingItems}"
+						  IsReadOnly="True"
+						  AutoGenerateColumns="False"
+						  SelectionUnit="FullRow"
+						  SelectionMode="Single">
+					<DataGrid.Columns>
+						<DataGridTextColumn Binding="{Binding Find}"
+											Header="Find (Regex)"
+											Width="200"
+											ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+											EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+							<DataGridTextColumn.HeaderStyle>
+								<Style TargetType="{x:Type DataGridColumnHeader}"
+									   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+									<Setter Property="HorizontalContentAlignment"
+											Value="Left" />
+								</Style>
+							</DataGridTextColumn.HeaderStyle>
+						</DataGridTextColumn>
+						<DataGridTextColumn Binding="{Binding Replacement}"
+											Header="Replace"
+											Width="200"
+											ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+											EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+							<DataGridTextColumn.HeaderStyle>
+								<Style TargetType="{x:Type DataGridColumnHeader}"
+									   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+									<Setter Property="HorizontalContentAlignment"
+											Value="Left" />
+								</Style>
+							</DataGridTextColumn.HeaderStyle>
+						</DataGridTextColumn>
+						<DataGridCheckBoxColumn Binding="{Binding CaseSensitive}"
+												Header="Case Sensitive"
+												ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
+						</DataGridCheckBoxColumn>
+						<DataGridTemplateColumn Header="">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal"
+												controls:Spacing.Horizontal="8">
+										<Button cal:Message.Attach="[Event Click] = [Action EditPreProcessing($this)]"
+												ToolTip="Edit Version"
+												Style="{StaticResource MaterialDesignToolButton}">
+
+											<materialDesign:PackIcon Kind="Edit"
+																	 Height="16"
+																	 Width="16" />
+										</Button>
+									
+										<Button cal:Message.Attach="[Event Click] = [Action RemovePreProcessing($this)]"
+												Style="{StaticResource MaterialDesignToolButton}">
+											<materialDesign:PackIcon Kind="Delete"
+																	 Height="16"
+																	 Width="16" />
+										</Button>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+
+				<!-- Post Processing -->
+				<materialDesign:ColorZone Padding="10,5"
+										  Margin="0, 16, 0, 0"
+										  Mode="PrimaryMid">
+
+					<StackPanel Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center"
+								   Style="{StaticResource MaterialDesignBody2TextBlock}"
+								   Text="Line Post-Processing" />
+
+						<Button x:Name="AddPostProcessing"
+								Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+							<StackPanel Orientation="Horizontal">
+								<materialDesign:PackIcon Kind="Add"
+														 VerticalAlignment="Center"
+														 Height="16"
+														 Width="16" />
+								<TextBlock Text="Add"
+										   VerticalAlignment="Center"
+										   Style="{StaticResource MaterialDesignTextBlock}"
+										   FontSize="10" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+				</materialDesign:ColorZone>
+
+				<DataGrid ItemsSource="{Binding PostProcessingItems}"
+						  IsReadOnly="True"
+						  AutoGenerateColumns="False"
+						  SelectionUnit="FullRow"
+						  SelectionMode="Single">
+					<DataGrid.Columns>
+						<DataGridTextColumn Binding="{Binding Find}"
+											Header="Find (Regex)"
+											Width="200"
+											ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+											EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+							<DataGridTextColumn.HeaderStyle>
+								<Style TargetType="{x:Type DataGridColumnHeader}"
+									   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+									<Setter Property="HorizontalContentAlignment"
+											Value="Left" />
+								</Style>
+							</DataGridTextColumn.HeaderStyle>
+						</DataGridTextColumn>
+						<DataGridTextColumn Binding="{Binding Replacement}"
+											Header="Replace"
+											Width="200"
+											ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+											EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+							<DataGridTextColumn.HeaderStyle>
+								<Style TargetType="{x:Type DataGridColumnHeader}"
+									   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+									<Setter Property="HorizontalContentAlignment"
+											Value="Left" />
+								</Style>
+							</DataGridTextColumn.HeaderStyle>
+						</DataGridTextColumn>
+						<DataGridCheckBoxColumn Binding="{Binding CaseSensitive}"
+												Header="Case Sensitive"
+												ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
+						</DataGridCheckBoxColumn>
+						<DataGridTemplateColumn Header="">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal"
+												controls:Spacing.Horizontal="8">
+										<Button cal:Message.Attach="[Event Click] = [Action EditPostProcessing($this)]"
+												ToolTip="Edit Version"
+												Style="{StaticResource MaterialDesignToolButton}">
+
+											<materialDesign:PackIcon Kind="Edit"
+																	 Height="16"
+																	 Width="16" />
+										</Button>
+
+										<Button cal:Message.Attach="[Event Click] = [Action RemovePostProcessing($this)]"
+												Style="{StaticResource MaterialDesignToolButton}">
+											<materialDesign:PackIcon Kind="Delete"
+																	 Height="16"
+																	 Width="16" />
+										</Button>
+									</StackPanel>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+
 				<!-- Scripts -->
 				<StackPanel>
 					<materialDesign:ColorZone Padding="10,5"
+											  Margin="0, 16, 0, 0"
 											  Mode="PrimaryMid">
 
 						<StackPanel Orientation="Horizontal">
@@ -145,7 +370,7 @@
 															 VerticalAlignment="Center"
 															 Height="16"
 															 Width="16" />
-									<TextBlock Text="Add Script"
+									<TextBlock Text="Add"
 											   VerticalAlignment="Center"
 											   Style="{StaticResource MaterialDesignTextBlock}"
 											   FontSize="10" />
@@ -157,12 +382,12 @@
 
 					<ListView ItemsSource="{Binding Path=ScriptsToTranslate}"
 							  controls:Spacing.Vertical="10">
-						
+
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal"
 											controls:Spacing.Horizontal="10">
-									
+
 									<TextBlock VerticalAlignment="Center"
 											   Style="{StaticResource MaterialDesignBody2TextBlock}"
 											   FontSize="18"
@@ -193,16 +418,5 @@
 
 			</StackPanel>
 		</Grid>
-
-		<materialDesign:DialogHost.DialogContent>
-			<StackPanel>
-				<!-- Version Dialog -->
-				<dialogs:VersionDialog Visibility="{Binding Path=IsVersionDialogOpen, Converter={StaticResource BoolToVis}}" />
-
-				<!-- New Script To Translate Dialog -->
-				<dialogs:SplitTextFileToTranslateDialog Visibility="{Binding Path=IsScriptDialogOpen, Converter={StaticResource BoolToVis}}" />
-			</StackPanel>
-		</materialDesign:DialogHost.DialogContent>
-
 	</materialDesign:DialogHost>
 </UserControl>

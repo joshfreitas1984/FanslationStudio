@@ -16,13 +16,49 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UserExperience\GenerateOutputView.xaml.cs">
+    <Compile Update="UserExperience\Dialogs\GeneratingExportDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserExperience\Dialogs\ImportingBulkFilesDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserExperience\Dialogs\ImportingRawDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserExperience\Dialogs\GeneratingOutputDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserExperience\Dialogs\PostFindReplaceDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserExperience\Dialogs\PreFindReplaceDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UserExperience\Dialogs\BulkImportFileDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="UserExperience\GenerateOutputView.xaml">
+    <Page Update="UserExperience\Dialogs\GeneratingExportDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserExperience\Dialogs\ImportingBulkFilesDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserExperience\Dialogs\ImportingRawDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserExperience\Dialogs\GeneratingOutputDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserExperience\Dialogs\PostFindReplaceDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserExperience\Dialogs\PreFindReplaceDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserExperience\Dialogs\BulkImportFileDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

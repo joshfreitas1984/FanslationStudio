@@ -14,30 +14,17 @@ using System.Windows.Controls;
 namespace FanslationStudio.UserExperience
 {
 
-    public class ShellViewModel : Conductor<object>, IHandle<SelectProjectEvent>, IHandle<SelectProjectVersionEvent>, IHandle<ImportProjectVersionEvent>
+    public class ShellViewModel : Conductor<object>, IHandle<SelectProjectEvent>, IHandle<SelectProjectVersionEvent>, 
+        IHandle<ImportProjectVersionEvent>, IHandle<GenerateOutputFilesEvent>, IHandle<GenerateExportFilesEvent>,
+        IHandle<ImportExportFilesEvent>
     {
         private IEventAggregator _eventAggregator;
         private Config _config;
         private Project _currentProject;
         private ProjectVersion _currentVersion;
         private string _title = "Fanslation Studio - Select a Project";
-        private Dictionary<string, List<ScriptTranslation>> _scripts;
-        private bool _isDialogOpen;
-        private TabItem _selectedTabItem;
-
-        public bool IsDialogOpen
-        {
-            get
-            {
-                return _isDialogOpen;
-            }
-            set
-            {
-                _isDialogOpen = value;
-                NotifyOfPropertyChange(() => IsDialogOpen);
-            }
-        }
-
+        private Dictionary<string, List<ScriptTranslation>> _scripts;       
+        private TabItem _selectedTabItem;       
         public string Title
         {
             get
@@ -78,7 +65,7 @@ namespace FanslationStudio.UserExperience
         public void SelectVersion(ProjectVersion version)
         {
             _currentVersion = version;
-            IsDialogOpen = true;
+            IsLoadingProjectDialogOpen = true;
 
             Task.Run(() =>
             {
@@ -89,13 +76,13 @@ namespace FanslationStudio.UserExperience
                 Title = $"FanslationStudio :: {_currentProject.Name} - Version: {_currentVersion.Version}";
 
                 Thread.Sleep(500); //Avoid flicker
-                IsDialogOpen = false;
+                IsLoadingProjectDialogOpen = false;
             });            
         }
 
         public void ImportVersion(ProjectVersion version)
         {            
-            IsDialogOpen = true;
+            IsImportingRawDialogOpen = true;
 
             Task.Run(() =>
             {
@@ -104,8 +91,60 @@ namespace FanslationStudio.UserExperience
                 version.ImportRawLinesAsTranslations(_currentProject);
 
                 Thread.Sleep(500); //Avoid flicker
-                IsDialogOpen = false;
+                IsImportingRawDialogOpen = false;
             });            
+        }
+
+        public void OuputFiles(ProjectVersion version)
+        {
+            IsGeneratingOutputDialogOpen = true;
+
+            Task.Run(() =>
+            {
+                version.CreateWorkspaceFolders(_config, _currentProject);
+                version.GenerateOutput(_currentProject);
+
+                Thread.Sleep(500); //Avoid flicker
+                IsGeneratingOutputDialogOpen = false;
+            });
+        }
+
+        public void ImportBulkFiles(string importFolder)
+        {
+            string projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _currentProject.Name);
+            string translationFolderVersion = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, _currentVersion);
+
+            IsImportingBulkFilesDialogOpen = true;
+
+            Task.Run(() =>
+            {
+                ExportFilesService.ImportLines(_scripts, importFolder);
+
+                foreach (var script in _scripts)
+                {
+                    string translatedFolder = $"{translationFolderVersion}\\{script.Key}";
+
+                    //Go through each script and add it if its missing
+                    ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, script.Value, true);
+                }
+
+                Thread.Sleep(500); //Avoid flicker
+                IsImportingBulkFilesDialogOpen = false;
+            });
+        }
+
+        public void ExportBulkFiles(List<ScriptSearchResult> searchResults)
+        {
+            IsGeneratingExportDialogOpen = true;
+
+            Task.Run(() =>
+            {
+                string projectFolder = ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _currentProject.Name);
+                ExportFilesService.ExportBulkFiles(searchResults, projectFolder, _currentVersion);
+
+                Thread.Sleep(500); //Avoid flicker
+                IsGeneratingExportDialogOpen = false;
+            });
         }
 
         //Method to handle navigation because we cant get caliburn to pipe through
@@ -126,12 +165,6 @@ namespace FanslationStudio.UserExperience
                         break;
                     case "ManualTranslate":
                         ShowManualTranslate();
-                        break;
-                    case "ImportBulk":
-                        ShowImportBulk();
-                        break;
-                    case "GenerateOutput":
-                        ShowGenerateOutput();
                         break;
                 }
             }
@@ -166,28 +199,6 @@ namespace FanslationStudio.UserExperience
             await ActivateItemAsync(vm);
         }
 
-        public async void ShowImportBulk()
-        {
-            var vm = IoC.Get<ImportBulkViewModel>();
-            vm.Config = _config;
-            vm.Project = _currentProject;
-            vm.Version = _currentVersion;
-            vm.Scripts = _scripts;
-
-            await ActivateItemAsync(vm);
-        }
-
-        public async void ShowGenerateOutput()
-        {
-            var vm = IoC.Get<GenerateOutputViewModel>();
-            vm.Config = _config;
-            vm.Project = _currentProject;
-            vm.Version = _currentVersion;
-            vm.Scripts = _scripts;
-
-            await ActivateItemAsync(vm);
-        }
-
         public async Task HandleAsync(SelectProjectEvent message, CancellationToken cancellationToken)
         {
             SelectProject(message.SelectedProject);
@@ -207,5 +218,135 @@ namespace FanslationStudio.UserExperience
             ImportVersion(message.SelectedVersion);
             await Task.CompletedTask;
         }
+        
+        public async Task HandleAsync(ImportExportFilesEvent message, CancellationToken cancellationToken)
+        {
+            ImportBulkFiles(message.ImportFolder);
+            await Task.CompletedTask;
+        }
+
+        public async Task HandleAsync(GenerateExportFilesEvent message, CancellationToken cancellationToken)
+        {
+            ExportBulkFiles(message.SearchResults);
+            await Task.CompletedTask;
+        }
+
+        public async Task HandleAsync(GenerateOutputFilesEvent message, CancellationToken cancellationToken)
+        {
+            OuputFiles(message.SelectedVersion);
+            await Task.CompletedTask;
+        }
+
+        #region Dialog Management
+
+        private bool _isLoadingProjectDialogOpen;
+        private bool _isGeneratingOutputDialogOpen;
+        private bool _isGeneratingExportDialogOpen;
+        private bool _isImportingRawDialogOpen;
+        private bool _isImportingBulkFilesDialogOpen;
+
+        public bool IsDialogOpen
+        {
+            get
+            {
+                return _isLoadingProjectDialogOpen || _isGeneratingOutputDialogOpen || _isGeneratingExportDialogOpen || _isImportingRawDialogOpen || _isImportingBulkFilesDialogOpen;
+            }
+        }
+
+        public bool IsLoadingProjectDialogOpen
+        {
+
+            get
+            {
+                return _isLoadingProjectDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isLoadingProjectDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsGeneratingOutputDialogOpen
+        {
+
+            get
+            {
+                return _isGeneratingOutputDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isGeneratingOutputDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsGeneratingExportDialogOpen
+        {
+
+            get
+            {
+                return _isGeneratingExportDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isGeneratingExportDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsImportingRawDialogOpen
+        {
+
+            get
+            {
+                return _isImportingRawDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isImportingRawDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsImportingBulkFilesDialogOpen
+        {
+
+            get
+            {
+                return _isImportingBulkFilesDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isImportingBulkFilesDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public void ResetDialogState()
+        {
+            _isLoadingProjectDialogOpen = false;
+            _isGeneratingOutputDialogOpen = false;
+            _isGeneratingExportDialogOpen = false;
+            _isImportingRawDialogOpen = false;
+            _isImportingBulkFilesDialogOpen = false;
+        }
+
+        public void NotifyDialogState()
+        {
+            NotifyOfPropertyChange(() => IsLoadingProjectDialogOpen);
+            NotifyOfPropertyChange(() => IsGeneratingOutputDialogOpen);
+            NotifyOfPropertyChange(() => IsGeneratingExportDialogOpen);
+            NotifyOfPropertyChange(() => IsImportingRawDialogOpen);
+            NotifyOfPropertyChange(() => IsImportingBulkFilesDialogOpen);
+            NotifyOfPropertyChange(() => IsDialogOpen);
+        }
+
+        #endregion
     }
 }

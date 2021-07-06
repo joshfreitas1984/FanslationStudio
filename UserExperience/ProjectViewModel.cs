@@ -1,6 +1,8 @@
 ﻿using Caliburn.Micro;
 using FanslationStudio.Domain;
-using FanslationStudio.ScriptToTranslate;
+using FanslationStudio.Domain.PostProcessing;
+using FanslationStudio.Domain.PreProcessing;
+using FanslationStudio.Domain.ScriptToTranslate;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -42,6 +44,7 @@ namespace FanslationStudio.UserExperience
                 _project = value;
                 NotifyOfPropertyChange(() => Project);
                 NotifyOfPropertyChange(() => ProjectFile);
+                NotifyOfPropertyChange(() => ProjectName);
             }
         }
 
@@ -61,53 +64,10 @@ namespace FanslationStudio.UserExperience
         #endregion
 
         private IEventAggregator _eventAggregator;
-        private bool _isScriptDialogOpen;
-        private bool _isVersionDialogOpen;
         private ObservableCollection<ProjectVersion> _versions;
-        private ObservableCollection<IScriptToTranslate> scriptsToTranslate;
-
-        public bool IsDialogOpen
-        {
-
-            get
-            {
-                return _isVersionDialogOpen || _isScriptDialogOpen;
-            }
-        }
-
-        public bool IsVersionDialogOpen
-        {
-
-            get
-            {
-                return _isVersionDialogOpen;
-            }
-            set
-            {
-                _isVersionDialogOpen = value;
-                _isScriptDialogOpen = false;
-                NotifyOfPropertyChange(() => IsVersionDialogOpen);
-                NotifyOfPropertyChange(() => IsScriptDialogOpen);
-                NotifyOfPropertyChange(() => IsDialogOpen);
-            }
-        }
-
-        public bool IsScriptDialogOpen
-        {
-
-            get
-            {
-                return _isScriptDialogOpen;
-            }
-            set
-            {
-                _isScriptDialogOpen = value;
-                _isVersionDialogOpen = false;
-                NotifyOfPropertyChange(() => IsVersionDialogOpen);
-                NotifyOfPropertyChange(() => IsScriptDialogOpen);
-                NotifyOfPropertyChange(() => IsDialogOpen);
-            }
-        }
+        private ObservableCollection<IScriptToTranslate> _scriptsToTranslate;
+        private ObservableCollection<IPreProcessing> _preProcessingItems;
+        private ObservableCollection<IPostProcessing> _postProcessingItems;
 
         public string ProjectName
         {
@@ -147,12 +107,38 @@ namespace FanslationStudio.UserExperience
         {
             get
             {
-                return scriptsToTranslate;
+                return _scriptsToTranslate;
             }
             set
             {
-                scriptsToTranslate = value;
+                _scriptsToTranslate = value;
                 NotifyOfPropertyChange(() => ScriptsToTranslate);
+            }
+        }
+
+        public ObservableCollection<IPreProcessing> PreProcessingItems
+        {
+            get
+            {
+                return _preProcessingItems;
+            }
+            set
+            {
+                _preProcessingItems = value;
+                NotifyOfPropertyChange(() => PreProcessingItems);
+            }
+        }
+
+        public ObservableCollection<IPostProcessing> PostProcessingItems
+        {
+            get
+            {
+                return _postProcessingItems;
+            }
+            set
+            {
+                _postProcessingItems = value;
+                NotifyOfPropertyChange(() => PostProcessingItems);
             }
         }
 
@@ -168,7 +154,122 @@ namespace FanslationStudio.UserExperience
         {
             Versions = new ObservableCollection<ProjectVersion>(Project.Versions);
             ScriptsToTranslate = new ObservableCollection<IScriptToTranslate>(Project.ScriptsToTranslate);
+            PreProcessingItems = new ObservableCollection<IPreProcessing>(Project.PreProcessingItems);
+            PostProcessingItems = new ObservableCollection<IPostProcessing>(Project.PostProcessingItems);
         }
+
+        #region Dialog Management
+
+        private bool _isScriptDialogOpen;
+        private bool _isVersionDialogOpen;
+        private bool _isPreProcessingDialogOpen;
+        private bool _isPostProcessingDialogOpen;
+        private bool _isBulkImportFileDialogOpen;
+
+        public bool IsDialogOpen
+        {
+
+            get
+            {
+                return _isVersionDialogOpen || _isScriptDialogOpen || _isPostProcessingDialogOpen || _isPreProcessingDialogOpen || _isBulkImportFileDialogOpen;
+            }
+        }
+
+        public bool IsVersionDialogOpen
+        {
+
+            get
+            {
+                return _isVersionDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isVersionDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsScriptDialogOpen
+        {
+
+            get
+            {
+                return _isScriptDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isScriptDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsPreProcessingDialogOpen
+        {
+
+            get
+            {
+                return _isPreProcessingDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isPreProcessingDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsPostProcessingDialogOpen
+        {
+
+            get
+            {
+                return _isPostProcessingDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isPostProcessingDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsBulkImportFileDialogOpen
+        {
+
+            get
+            {
+                return _isBulkImportFileDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isBulkImportFileDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public void ResetDialogState()
+        {
+            _isVersionDialogOpen = false;
+            _isScriptDialogOpen = false;
+            _isPostProcessingDialogOpen = false;
+            _isPreProcessingDialogOpen = false;
+            _isBulkImportFileDialogOpen = false;
+        }
+
+        public void NotifyDialogState()
+        {
+            NotifyOfPropertyChange(() => IsVersionDialogOpen);
+            NotifyOfPropertyChange(() => IsScriptDialogOpen);
+            NotifyOfPropertyChange(() => IsPreProcessingDialogOpen);
+            NotifyOfPropertyChange(() => IsPostProcessingDialogOpen);
+            NotifyOfPropertyChange(() => IsBulkImportFileDialogOpen);
+            NotifyOfPropertyChange(() => IsDialogOpen);
+        }
+
+        #endregion
 
         #region Version
 
@@ -205,6 +306,14 @@ namespace FanslationStudio.UserExperience
             });
         }
 
+        public void OutputVersion(ProjectVersion version)
+        {
+            _eventAggregator.PublishOnUIThreadAsync(new Events.GenerateOutputFilesEvent()
+            {
+                SelectedVersion = version
+            });
+        }
+
         public void AddVersion()
         {
             //Default to Last Versions stuff
@@ -213,10 +322,14 @@ namespace FanslationStudio.UserExperience
             {
                 Version = lastVersion?.Version,
                 RawInputFolder = lastVersion?.RawInputFolder,
+                SourceLanguageCode = lastVersion?.SourceLanguageCode,
+                TargetLanguageCode = lastVersion?.TargetLanguageCode,
             };
 
             SelectedVersion = version;
             VersionName = version.Version;
+            SourceLanguageCode = version.SourceLanguageCode;
+            TargetLanguageCode = version.TargetLanguageCode;
             RawInputFolder = version.RawInputFolder;
             IsNewVersion = true;
 
@@ -227,6 +340,8 @@ namespace FanslationStudio.UserExperience
         {
             SelectedVersion = version;
             VersionName = version.Version;
+            SourceLanguageCode = version.SourceLanguageCode;
+            TargetLanguageCode = version.TargetLanguageCode;
             RawInputFolder = version.RawInputFolder;
             IsNewVersion = false;
 
@@ -243,11 +358,19 @@ namespace FanslationStudio.UserExperience
             }
         }
 
+        public void ImportBulkFiles(ProjectVersion version)
+        {
+            BulkImportFolder = _project.LastBulkImportFolder;
+            IsBulkImportFileDialogOpen = true;
+        }
+
         #endregion
 
         #region Version Dialog
 
         private string _versionName;
+        private string _sourceLanguageCode;
+        private string _targetLanguageCode;
         private string _rawInputFolder;
         private bool _isNewVersion;
 
@@ -276,6 +399,34 @@ namespace FanslationStudio.UserExperience
             {
                 _versionName = value;
                 NotifyOfPropertyChange(() => VersionName);
+            }
+        }
+
+        public string SourceLanguageCode
+        {
+            get
+            {
+                return _sourceLanguageCode;
+            }
+
+            set
+            {
+                _sourceLanguageCode = value;
+                NotifyOfPropertyChange(() => SourceLanguageCode);
+            }
+        }
+
+        public string TargetLanguageCode
+        {
+            get
+            {
+                return _targetLanguageCode;
+            }
+
+            set
+            {
+                _targetLanguageCode = value;
+                NotifyOfPropertyChange(() => TargetLanguageCode);
             }
         }
 
@@ -309,6 +460,8 @@ namespace FanslationStudio.UserExperience
             else
             {
                 SelectedVersion.RawInputFolder = RawInputFolder;
+                SelectedVersion.SourceLanguageCode = SourceLanguageCode;
+                SelectedVersion.TargetLanguageCode = TargetLanguageCode;
             }
 
             Project.WriteProjectFile();
@@ -332,6 +485,290 @@ namespace FanslationStudio.UserExperience
             {
                 RawInputFolder = openFileDialog.FileName;
             }
+        }
+
+        #endregion
+
+        #region Bulk Import Dialog
+
+        private string _bulkImportFolder;
+
+        public string BulkImportFolder
+        {
+            get
+            {
+                return _bulkImportFolder;
+            }
+            set
+            {
+                _bulkImportFolder = value;
+                NotifyOfPropertyChange(() => BulkImportFolder);
+            }
+        }
+
+        public void BrowseBulkImportFolder()
+        {
+            var openFileDialog = new CommonOpenFileDialog()
+            {
+                InitialDirectory = BulkImportFolder,
+                IsFolderPicker = true,
+            };
+
+            if (openFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                BulkImportFolder = openFileDialog.FileName;
+            }
+        }
+
+        public void AcceptBulkImport()
+        {
+            _project.LastBulkImportFolder = BulkImportFolder;
+            _project.WriteProjectFile();
+
+            _eventAggregator.PublishOnUIThreadAsync(new Events.ImportExportFilesEvent()
+            {
+                ImportFolder = BulkImportFolder,
+            });
+
+            IsBulkImportFileDialogOpen = false;
+        }
+
+        public void CancelBulkImport()
+        {
+            IsBulkImportFileDialogOpen = false;
+        }
+
+        #endregion
+
+        #region Pre & Post Processing
+
+        private IPreProcessing _selectedPreProcessing;
+        private IPostProcessing _selectedPostProcessing;
+
+        public IPreProcessing SelectedPreProcessing
+        {
+            get
+            {
+                return _selectedPreProcessing;
+            }
+            set
+            {
+                _selectedPreProcessing = value;
+                NotifyOfPropertyChange(() => SelectedPreProcessing);
+            }
+        }
+
+        public IPostProcessing SelectedPostProcessing
+        {
+            get
+            {
+                return _selectedPostProcessing;
+            }
+            set
+            {
+                _selectedPostProcessing = value;
+                NotifyOfPropertyChange(() => SelectedPostProcessing);
+            }
+        }
+
+        public void AddPreProcessing()
+        {
+            //Default to Last Scripts stuff
+            var lastItem = Project.PreProcessingItems.LastOrDefault(s => s is PreFindReplace) as PreFindReplace;
+            var item = new PreFindReplace()
+            {
+                Find = lastItem?.Find,
+                Replacement = lastItem?.Replacement,
+                CaseSensitive = lastItem?.CaseSensitive ?? false,
+            };
+            
+            SelectedPreProcessing = item;            
+            ProcessingFind = item.Find;
+            ProcessingReplacement = item.Replacement;
+            ProcessingCaseSensitive = item.CaseSensitive;
+
+            _isNewProcessing = true;
+            IsPreProcessingDialogOpen = true;
+        }
+
+        public void EditPreProcessing(IPreProcessing sourceItem)
+        {
+            var item = sourceItem as PreFindReplace;
+            if (item != null)
+            {
+                SelectedPreProcessing = item;
+                ProcessingFind = item.Find;
+                ProcessingReplacement = item.Replacement;
+                ProcessingCaseSensitive = item.CaseSensitive;
+
+                _isNewProcessing = false;
+                IsPreProcessingDialogOpen = true;
+            }
+        }
+
+        public void RemovePreProcessing(IPreProcessing item)
+        {
+            PreProcessingItems.Remove(item);
+            Project.PreProcessingItems.Remove(item);
+            Project.WriteProjectFile();
+        }
+
+        public void AddPostProcessing()
+        {
+            //Default to Last Scripts stuff
+            var lastItem = Project.PostProcessingItems.LastOrDefault(s => s is PostFindReplace) as PostFindReplace;
+            var item = new PostFindReplace()
+            {
+                Find = lastItem?.Find,
+                Replacement = lastItem?.Replacement,
+                CaseSensitive = lastItem?.CaseSensitive ?? false,
+            };
+
+            SelectedPostProcessing = item;
+            ProcessingFind = item.Find;
+            ProcessingReplacement = item.Replacement;
+            ProcessingCaseSensitive = item.CaseSensitive;
+
+            _isNewProcessing = true;
+            IsPostProcessingDialogOpen = true;
+        }
+
+        public void EditPostProcessing(IPostProcessing sourceItem)
+        {
+            var item = sourceItem as PostFindReplace;
+            if (item != null)
+            {
+                SelectedPostProcessing = item;
+                ProcessingFind = item.Find;
+                ProcessingReplacement = item.Replacement;
+                ProcessingCaseSensitive = item.CaseSensitive;
+
+                _isNewProcessing = false;
+                IsPostProcessingDialogOpen = true;
+            }
+        }
+
+        public void RemovePostProcessing(IPostProcessing item)
+        {
+            PostProcessingItems.Remove(item);
+            Project.PostProcessingItems.Remove(item);
+            Project.WriteProjectFile();
+        }
+
+        #endregion
+
+        #region Pre & Post Processing Dialog
+
+        private string _processingFind;
+        private string _processingReplacement;
+        private bool _processingCaseSensitive;
+        private bool _isNewProcessing;
+
+        public string ProcessingFind
+        {
+            get
+            {
+                return _processingFind;
+            }
+            set
+            {
+                _processingFind = value;
+                NotifyOfPropertyChange(() => ProcessingFind);
+            }
+        }
+
+        public string ProcessingReplacement
+        {
+            get
+            {
+                return _processingReplacement;
+            }
+            set
+            {
+                _processingReplacement = value;
+                NotifyOfPropertyChange(() => ProcessingReplacement);
+            }
+        }
+
+        public bool ProcessingCaseSensitive
+        {
+            get
+            {
+                return _processingCaseSensitive;
+            }
+            set
+            {
+                _processingCaseSensitive = value;
+                NotifyOfPropertyChange(() => ProcessingCaseSensitive);
+            }
+        }
+
+        public void AcceptPreFindReplace()
+        {
+            if (_isNewProcessing)
+            {
+                var item = new PreFindReplace()
+                {
+                    Find = ProcessingFind,
+                    Replacement = ProcessingReplacement,
+                    CaseSensitive = ProcessingCaseSensitive,
+                };
+
+                PreProcessingItems.Add(item);
+                Project.PreProcessingItems.Add(item);
+            }
+            else
+            {
+                var item = SelectedPreProcessing as PreFindReplace;
+                if (item != null)
+                {
+                    item.Find = ProcessingFind;
+                    item.Replacement = ProcessingReplacement;
+                    item.CaseSensitive = ProcessingCaseSensitive;
+                }
+            }
+
+            Project.WriteProjectFile();
+            IsPreProcessingDialogOpen = false;
+        }
+
+        public void CancelPreFindReplace()
+        {
+            IsPreProcessingDialogOpen = false;
+        }
+
+        public void AcceptPostFindReplace()
+        {
+            if (_isNewProcessing)
+            {
+                var item = new PostFindReplace()
+                {
+                    Find = ProcessingFind,
+                    Replacement = ProcessingReplacement,
+                    CaseSensitive = ProcessingCaseSensitive,
+                };
+
+                PostProcessingItems.Add(item);
+                Project.PostProcessingItems.Add(item);
+            }
+            else
+            {
+                var item = SelectedPostProcessing as PostFindReplace;
+                if (item != null)
+                {
+                    item.Find = ProcessingFind;
+                    item.Replacement = ProcessingReplacement;
+                    item.CaseSensitive = ProcessingCaseSensitive;
+                }
+            }
+
+            Project.WriteProjectFile();
+            IsPostProcessingDialogOpen = false;
+        }
+
+        public void CancelPostFindReplace()
+        {
+            IsPostProcessingDialogOpen = false;
         }
 
         #endregion

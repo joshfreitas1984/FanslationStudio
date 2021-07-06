@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FanslationStudio.UserExperience
+namespace FanslationStudio.UserExperience.Dialogs
 {
     /// <summary>
-    /// Interaction logic for ImportBulkView.xaml
+    /// Interaction logic for ImportingRawDialog.xaml
     /// </summary>
-    public partial class ImportBulkView : UserControl
+    public partial class ImportingRawDialog : UserControl
     {
-        public ImportBulkView()
+        public ImportingRawDialog()
         {
             InitializeComponent();
         }

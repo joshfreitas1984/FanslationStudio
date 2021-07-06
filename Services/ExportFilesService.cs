@@ -9,7 +9,7 @@ namespace FanslationStudio.Services
 {
     public static class ExportFilesService
     {
-        public static void ExportBatchFiles(List<ScriptSearchResult> SearchResults, string projectFolder, ProjectVersion version)
+        public static void ExportBulkFiles(List<ScriptSearchResult> SearchResults, string projectFolder, ProjectVersion version)
         {
             int characterLimit = 4500; //For some reason the character calculator is off so we go under the 5k limit
 
@@ -97,14 +97,23 @@ namespace FanslationStudio.Services
 
                         //Get id
                         int endIndex = line.IndexOf("/>");
-                        if (endIndex == 0)
+                        if (endIndex == -1)
                             continue; 
 
                         string lineTag = line.Substring(0, endIndex);
+
+                        //Validate the tag is valid too - Deepl can mess it up too
+                        if (lineTag.IndexOf("id=") == -1 || lineTag.IndexOf("seq=") == -1)
+                            continue;
+
                         var splits = lineTag.Split(" ");
                         string lineId = splits[0].Replace("<id=", "");
                         string sequence = splits[1].Replace("seq=", "");
                         string translatedLine = line.Substring(endIndex + 2, line.Length - endIndex - 2);
+
+                        //If there is multiple id lines then its completely messed up that line (Frequent with DeepL free license)
+                        if (translatedLine.IndexOf("<id=") >= 0)
+                            continue;
 
                         //Get item and update it
                         var item = sourceFile.Value.Where(s => s.LineId == lineId).FirstOrDefault();

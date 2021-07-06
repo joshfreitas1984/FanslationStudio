@@ -1,5 +1,5 @@
 ﻿using FanslationStudio.Domain;
-using FanslationStudio.ScriptToTranslate;
+using FanslationStudio.Domain.ScriptToTranslate;
 using System;
 using System.Collections.Generic;
 using System.Text;

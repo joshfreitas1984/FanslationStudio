@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using FanslationStudio.Domain;
+using FanslationStudio.Domain.ScriptToTranslate;
 using FanslationStudio.UserExperience.Events;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -141,9 +142,11 @@ namespace FanslationStudio.UserExperience
                     {
                         Version = "1.0",
                         RawInputFolder = RawInputFolder,
+                        SourceLanguageCode = "ZH",
+                        TargetLanguageCode = "EN",
                     },
                 },
-                ScriptsToTranslate = new List<ScriptToTranslate.IScriptToTranslate>(),
+                ScriptsToTranslate = new List<IScriptToTranslate>(),
             };
 
             project.CreateWorkspaceFolder(_config);

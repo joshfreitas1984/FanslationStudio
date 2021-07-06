@@ -1,7 +1,7 @@
 ﻿using FanslationStudio.Domain;
 using System.Collections.Generic;
 
-namespace FanslationStudio.ScriptToTranslate
+namespace FanslationStudio.Domain.ScriptToTranslate
 {
     public interface IScriptToTranslate
     {

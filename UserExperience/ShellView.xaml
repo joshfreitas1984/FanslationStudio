@@ -86,34 +86,6 @@
 							</StackPanel>
 						</TabItem.Header>
 					</TabItem>
-					<TabItem x:Name="ImportBulk"
-							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-							 Width="200">
-						<TabItem.Header>
-							<StackPanel Orientation="Horizontal"
-										Width="200">
-								<materialDesign:PackIcon Kind="Import"
-														 Width="24"
-														 Height="24" />
-								<TextBlock VerticalAlignment="Center"
-										   Margin="10,0">Import Batch</TextBlock>
-							</StackPanel>
-						</TabItem.Header>
-					</TabItem>
-					<TabItem x:Name="GenerateOutput"
-							 Style="{StaticResource MaterialDesignNavigationRailTabItem}"
-							 Width="200">
-						<TabItem.Header>
-							<StackPanel Orientation="Horizontal"
-										Width="200">
-								<materialDesign:PackIcon Kind="Export"
-														 Width="24"
-														 Height="24" />
-								<TextBlock VerticalAlignment="Center"
-										   Margin="10,0">Generate Output</TextBlock>
-							</StackPanel>
-						</TabItem.Header>
-					</TabItem>
 				</TabControl>
 
 				<Grid>

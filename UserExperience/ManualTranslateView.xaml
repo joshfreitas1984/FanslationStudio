@@ -65,6 +65,14 @@
 											   FontSize="10" />
 								</StackPanel>
 							</Button>
+
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"
+									   Margin="0"
+									   Text="{Binding Path=SearchResults.Count}" />
+							<TextBlock VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"
+									   Text=" records found" />
 						</StackPanel>
 					</materialDesign:ColorZone>
 					<DataGrid ItemsSource="{Binding SearchResults}"
@@ -79,6 +87,19 @@
 							<DataGridTextColumn Binding="{Binding SourcePath}"
 												Header="Source Path"
 												Width="200"
+												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+								<DataGridTextColumn.HeaderStyle>
+									<Style TargetType="{x:Type DataGridColumnHeader}"
+										   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+										<Setter Property="HorizontalContentAlignment"
+												Value="Left" />
+									</Style>
+								</DataGridTextColumn.HeaderStyle>
+							</DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Script.LineId}"
+												Header="Id"
+												Width="100"
 												ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
 												EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
 								<DataGridTextColumn.HeaderStyle>
@@ -176,6 +197,20 @@
 								</StackPanel>
 							</Button>
 
+							<Button x:Name="CopyFromDeepL"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="ContentCopy"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Copy From Deepl"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
 						</StackPanel>
 					</materialDesign:ColorZone>
 					<TextBox x:Name="SelectedCurrentTranslation"
@@ -285,11 +320,22 @@
 
 				<!-- MTL Panels -->
 				<materialDesign:DrawerHost.RightDrawerContent>
-					<StackPanel Margin="10"
-								controls:Spacing.Vertical="10">
+					<Grid Margin="8">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto"/>
+							<RowDefinition />
+							<RowDefinition Height="Auto"/>
+							<RowDefinition />
+						</Grid.RowDefinitions>
+
 						<TextBlock Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+								   Grid.Row="0"
+								   Margin="0, 16"
 								   Text="Machine Translation" />
+
 						<materialDesign:ColorZone Padding="10,5"
+												  Grid.Row="1"
 												  Mode="PrimaryMid">
 							<TextBlock VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignBody2TextBlock}"
@@ -298,13 +344,15 @@
 
 						<Border BorderThickness="0,1"
 								Width="800"
-								Height="390">
+								MinHeight="390"
+								Grid.Row="2">
 							<cef:ChromiumWebBrowser x:Name="DeepLTranslate"
 													Address="https://www.deepl.com/translator#zh/en/" />
 						</Border>
 
 						<materialDesign:ColorZone Padding="10,5"
-												  Mode="PrimaryMid">
+												  Mode="PrimaryMid"
+												  Grid.Row="3">
 							<TextBlock VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignBody2TextBlock}"
 									   Text="Google Translate" />
@@ -312,20 +360,21 @@
 
 						<Border BorderThickness="0,1"
 								Width="800"
-								Height="390">
+								MinHeight="390"
+								Grid.Row="4">
 							<cef:ChromiumWebBrowser x:Name="GoogleTranslate"
 													Address="https://translate.google.com" />
 						</Border>
-
-					</StackPanel>
+					</Grid>
 				</materialDesign:DrawerHost.RightDrawerContent>
 			</materialDesign:DrawerHost>
 
 			<!-- Search Panels: Have to manually bind drawers the conventions dont seem to work -->
 			<materialDesign:DrawerHost.LeftDrawerContent>
-				<StackPanel Margin="10"
-							controls:Spacing.Vertical="10">
+				<StackPanel Margin="8"
+							controls:Spacing.Vertical="16">
 					<TextBlock Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+							   Margin="0, 16"
 							   Text="Search" />
 
 					<materialDesign:ColorZone Mode="Standard"
@@ -346,7 +395,7 @@
 								<materialDesign:PackIcon Kind="Search"
 														 Opacity=".56" />
 							</Button>
-							<TextBox x:Name="QuickSearchTerm"
+							<TextBox Text="{Binding Path=QuickFindTerm}"
 									 Grid.Column="1"
 									 Margin="8 0 0 0"
 									 materialDesign:HintAssist.Hint="Quick Find"

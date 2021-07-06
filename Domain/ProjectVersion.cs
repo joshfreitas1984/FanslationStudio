@@ -1,4 +1,4 @@
-﻿using FanslationStudio.ScriptToTranslate;
+﻿using FanslationStudio.Domain.ScriptToTranslate;
 using FanslationStudio.Services;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -19,6 +19,8 @@ namespace FanslationStudio.Domain
         public string RawInputFolder { get; set; }
         public bool OldGameTranslator { get; set; }
         public string GameTranslatorSource { get; set; }
+        public string SourceLanguageCode { get; set; }
+        public string TargetLanguageCode { get; set; }
 
         public void CreateWorkspaceFolders(Config config, Project project)
         {

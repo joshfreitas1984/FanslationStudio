@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="FanslationStudio.UserExperience.Dialogs.VersionDialog"
+﻿<UserControl x:Class="FanslationStudio.UserExperience.Dialogs.BulkImportFileDialog"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,42 +11,22 @@
 	<StackPanel controls:Spacing.Vertical="16"
 				Margin="16"
 				Width="600">
-
-		<TextBox Text="{Binding Path=VersionName}"
-				 materialDesign:HintAssist.Hint="Version Name"
-				 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-				 Margin="0,5"
-				 VerticalAlignment="Center" />
-		
-		<TextBox Text="{Binding Path=SourceLanguageCode}"
-				 materialDesign:HintAssist.Hint="Source Language Code"
-				 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-				 Margin="0,5"
-				 VerticalAlignment="Center" />
-
-		<TextBox Text="{Binding Path=TargetLanguageCode}"
-				 materialDesign:HintAssist.Hint="Target Language Code"
-				 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-				 Margin="0,5"
-				 VerticalAlignment="Center" />
-
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
-			<TextBox Text="{Binding Path=RawInputFolder}"
+			<TextBox Text="{Binding Path=BulkImportFolder}"
 					 Grid.Column="0"
-					 materialDesign:HintAssist.Hint="Raw Input Folder"
+					 materialDesign:HintAssist.Hint="Bulk Import Folder"
 					 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
 					 Margin="0,5"
 					 VerticalAlignment="Center" />
 
-			<Button x:Name="BrowseRawInput"
-					Grid.Column="1"
+			<Button Grid.Column="1"
 					Margin="16"
-					cal:Message.Attach="[Event Click] = [Action BrowseRawInput()]"
+					cal:Message.Attach="[Event Click] = [Action BrowseBulkImportFolder()]"
 					Content="..." />
 
 		</Grid>
@@ -57,13 +37,13 @@
 			<Button Style="{StaticResource MaterialDesignFlatButton}"
 					IsDefault="True"
 					Margin="0 8 8 0"
-					cal:Message.Attach="[Event Click] = [Action AcceptVersion()]"
-					Content="ACCEPT" />
+					cal:Message.Attach="[Event Click] = [Action AcceptBulkImport()]"
+					Content="IMPORT" />
 
 			<Button Style="{StaticResource MaterialDesignFlatButton}"
 					IsCancel="True"
 					Margin="0 8 8 0"
-					cal:Message.Attach="[Event Click] = [Action CancelVersion()]"
+					cal:Message.Attach="[Event Click] = [Action CancelBulkImport()]"
 					Content="CANCEL" />
 		</StackPanel>
 	</StackPanel>

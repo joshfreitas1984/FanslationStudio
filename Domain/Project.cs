@@ -1,4 +1,6 @@
-﻿using FanslationStudio.ScriptToTranslate;
+﻿using FanslationStudio.Domain.PostProcessing;
+using FanslationStudio.Domain.PreProcessing;
+using FanslationStudio.Domain.ScriptToTranslate;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +17,24 @@ namespace FanslationStudio.Domain
 
         public List<ProjectVersion> Versions { get; set; }
 
+        public List<IPreProcessing> PreProcessingItems { get; set; }
+
+        public List<IPostProcessing> PostProcessingItems { get; set; }
+
+        public List<SearchPattern> SearchPatterns { get; set; }
+
         public string ProjectFile { get; set; }
+
+        public string LastBulkImportFolder { get; set; }
+
+        public Project()
+        {
+            PreProcessingItems = new List<IPreProcessing>();
+            PostProcessingItems = new List<IPostProcessing>();
+            SearchPatterns = new List<SearchPattern>();
+            Versions = new List<ProjectVersion>();
+            ScriptsToTranslate = new List<IScriptToTranslate>();
+        }
 
         /// <summary>
         /// Loads project file for JSON file and returns project object

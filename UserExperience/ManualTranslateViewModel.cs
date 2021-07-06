@@ -245,7 +245,8 @@ namespace FanslationStudio.UserExperience
             _projectFolder = Services.ProjectFolderService.CalculateProjectFolder(_config.WorkshopFolder, _project.Name);
             _translationVersionFolder = Services.ProjectFolderService.CalculateTranslationVersionFolder(_projectFolder, _version);
 
-            SearchPatterns = new ObservableCollection<SearchPattern>(_config.SearchPatterns);
+            SearchPatterns = new ObservableCollection<SearchPattern>(_project.SearchPatterns);
+            ShowMtlPanel = true;
         }
 
         public async void SelectSearchResult(ScriptSearchResult item)
@@ -256,7 +257,12 @@ namespace FanslationStudio.UserExperience
             ScratchZone = string.Empty;
 
             if (item != null)
-                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item?.Item.CleanedUpLine));
+                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item?.Item.CleanedUpLine, Version.SourceLanguageCode, Version.TargetLanguageCode));
+        }
+
+        public async void CopyFromDeepL()
+        {
+            await _eventAggregator.PublishOnUIThreadAsync(new Events.RequestDeeplResult());
         }
 
         public void ShowSearchFiles()
@@ -291,7 +297,7 @@ namespace FanslationStudio.UserExperience
 
         public void AddSearchPattern()
         {
-            var lastPattern = SearchPatterns.Last();
+            var lastPattern = SearchPatterns.LastOrDefault();
 
             if (!string.IsNullOrEmpty(lastPattern?.Find))
                 SearchPatterns.Add(new SearchPattern());
@@ -305,11 +311,11 @@ namespace FanslationStudio.UserExperience
 
         public void WriteSearchPatterns()
         {
-            _config.SearchPatterns = SearchPatterns
+            _project.SearchPatterns = SearchPatterns
                 .Where(p => p.Find != string.Empty)
                 .ToList();
 
-            _config.WriteConfig();
+            _project.WriteProjectFile();
         }
 
         public void SortSearchPattern()
@@ -349,7 +355,11 @@ namespace FanslationStudio.UserExperience
         
         public void ExportBatchFiles()
         {
-            ExportFilesService.ExportBatchFiles(SearchResults.ToList(), _projectFolder, _version);
+            //We do this on the shell because we dont want people moving around while we're exporting
+            _eventAggregator.PublishOnUIThreadAsync(new Events.GenerateExportFilesEvent()
+            {
+                SearchResults = SearchResults.ToList(),
+            });
         }
     }
 }

@@ -11,9 +11,7 @@ namespace FanslationStudio.Domain
         static string _fileName = "config.json";
 
         public string WorkshopFolder { get; set; }
-        public string LastProjectFile { get; set; }
-        public string LastImportFolder { get; set; }
-        public List<SearchPattern> SearchPatterns { get; set; }
+        public string LastProjectFile { get; set; }   
 
         public static Config LoadConfig()
         {

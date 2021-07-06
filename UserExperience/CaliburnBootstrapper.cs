@@ -35,10 +35,6 @@ namespace FanslationStudio.UserExperience
             _container.Singleton<ProjectViewModel>();
             _container.Singleton<ManualTranslateView>();
             _container.Singleton<ManualTranslateViewModel>();
-            _container.Singleton<ImportBulkView>();
-            _container.Singleton<ImportBulkViewModel>();
-            _container.Singleton<GenerateOutputView>();
-            _container.Singleton<GenerateOutputViewModel>();
             _container.Singleton<HomeView>();
             _container.Singleton<HomeViewModel>();
         }

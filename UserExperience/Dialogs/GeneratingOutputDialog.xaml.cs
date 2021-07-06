@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FanslationStudio.UserExperience
+namespace FanslationStudio.UserExperience.Dialogs
 {
     /// <summary>
-    /// Interaction logic for GenerateOutputView.xaml
+    /// Interaction logic for GeneratingOutputDialog.xaml
     /// </summary>
-    public partial class GenerateOutputView : UserControl
+    public partial class GeneratingOutputDialog : UserControl
     {
-        public GenerateOutputView()
+        public GeneratingOutputDialog()
         {
             InitializeComponent();
         }
