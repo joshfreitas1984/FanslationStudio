@@ -619,6 +619,22 @@ namespace FanslationStudio.UserExperience
             Project.WriteProjectFile();
         }
 
+        public void MoveUpPreProcessing(IPreProcessing item)
+        {
+            int index = PreProcessingItems.IndexOf(item);
+
+            if (index > 0) //Not First Index
+                PreProcessingItems.Move(index, index - 1);
+        }
+
+        public void MoveDownPreProcessing(IPreProcessing item)
+        {
+            int index = PreProcessingItems.IndexOf(item);
+
+            if (index < PreProcessingItems.Count - 1) //Not Last Index
+                PreProcessingItems.Move(index, index + 1);
+        }
+
         public void AddPostProcessing()
         {
             //Default to Last Scripts stuff
@@ -665,6 +681,22 @@ namespace FanslationStudio.UserExperience
             PostProcessingItems.Remove(item);
             Project.PostProcessingItems.Remove(item);
             Project.WriteProjectFile();
+        }
+
+        public void MoveUpPostProcessing(IPostProcessing item)
+        {
+            int index = PostProcessingItems.IndexOf(item);
+
+            if (index > 0) //Not First Index
+                PostProcessingItems.Move(index, index - 1);
+        }
+
+        public void MoveDownPostProcessing(IPostProcessing item)
+        {
+            int index = PostProcessingItems.IndexOf(item);
+
+            if (index < PostProcessingItems.Count - 1) //Not Last Index
+                PostProcessingItems.Move(index, index + 1);
         }
 
         #endregion
