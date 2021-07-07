@@ -11,7 +11,7 @@
 			 xmlns:dialogs="clr-namespace:FanslationStudio.UserExperience.Dialogs"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450"
-			 d:DesignWidth="800">
+			 d:DesignWidth="1000">
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolToVis" />
 	</UserControl.Resources>
@@ -198,6 +198,7 @@
 
 				<DataGrid ItemsSource="{Binding PreProcessingItems}"
 						  IsReadOnly="True"
+						  MaxHeight="300"
 						  AutoGenerateColumns="False"
 						  SelectionUnit="FullRow"
 						  SelectionMode="Single">
@@ -228,8 +229,26 @@
 								</Style>
 							</DataGridTextColumn.HeaderStyle>
 						</DataGridTextColumn>
+						<DataGridTextColumn Binding="{Binding Comment}"
+											Header="Comment"
+											Width="200"
+											ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+											EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+							<DataGridTextColumn.HeaderStyle>
+								<Style TargetType="{x:Type DataGridColumnHeader}"
+									   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+									<Setter Property="HorizontalContentAlignment"
+											Value="Left" />
+								</Style>
+							</DataGridTextColumn.HeaderStyle>
+						</DataGridTextColumn>
 						<DataGridCheckBoxColumn Binding="{Binding CaseSensitive}"
 												Header="Case Sensitive"
+												ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
+						</DataGridCheckBoxColumn>
+						<DataGridCheckBoxColumn Binding="{Binding Enabled}"
+												Header="Enabled"
 												ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
 												EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
 						</DataGridCheckBoxColumn>
@@ -289,6 +308,7 @@
 
 				<DataGrid ItemsSource="{Binding PostProcessingItems}"
 						  IsReadOnly="True"
+						  MaxHeight="300"
 						  AutoGenerateColumns="False"
 						  SelectionUnit="FullRow"
 						  SelectionMode="Single">
@@ -319,8 +339,26 @@
 								</Style>
 							</DataGridTextColumn.HeaderStyle>
 						</DataGridTextColumn>
+						<DataGridTextColumn Binding="{Binding Comment}"
+											Header="Comment"
+											Width="200"
+											ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+											EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}">
+							<DataGridTextColumn.HeaderStyle>
+								<Style TargetType="{x:Type DataGridColumnHeader}"
+									   BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+									<Setter Property="HorizontalContentAlignment"
+											Value="Left" />
+								</Style>
+							</DataGridTextColumn.HeaderStyle>
+						</DataGridTextColumn>
 						<DataGridCheckBoxColumn Binding="{Binding CaseSensitive}"
 												Header="Case Sensitive"
+												ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+												EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
+						</DataGridCheckBoxColumn>
+						<DataGridCheckBoxColumn Binding="{Binding Enabled}"
+												Header="Enabled"
 												ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
 												EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
 						</DataGridCheckBoxColumn>
@@ -381,6 +419,7 @@
 					</materialDesign:ColorZone>
 
 					<ListView ItemsSource="{Binding Path=ScriptsToTranslate}"
+							  MaxHeight="300"
 							  controls:Spacing.Vertical="10">
 
 						<ListBox.ItemTemplate>

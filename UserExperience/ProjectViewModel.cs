@@ -580,12 +580,16 @@ namespace FanslationStudio.UserExperience
                 Find = lastItem?.Find,
                 Replacement = lastItem?.Replacement,
                 CaseSensitive = lastItem?.CaseSensitive ?? false,
+                Comment = lastItem?.Comment,
+                Enabled = true,
             };
             
             SelectedPreProcessing = item;            
             ProcessingFind = item.Find;
             ProcessingReplacement = item.Replacement;
             ProcessingCaseSensitive = item.CaseSensitive;
+            ProcessingComment = item.Comment;
+            ProcessingEnabled = item.Enabled;
 
             _isNewProcessing = true;
             IsPreProcessingDialogOpen = true;
@@ -600,6 +604,8 @@ namespace FanslationStudio.UserExperience
                 ProcessingFind = item.Find;
                 ProcessingReplacement = item.Replacement;
                 ProcessingCaseSensitive = item.CaseSensitive;
+                ProcessingComment = item.Comment;
+                ProcessingEnabled = item.Enabled;
 
                 _isNewProcessing = false;
                 IsPreProcessingDialogOpen = true;
@@ -622,12 +628,16 @@ namespace FanslationStudio.UserExperience
                 Find = lastItem?.Find,
                 Replacement = lastItem?.Replacement,
                 CaseSensitive = lastItem?.CaseSensitive ?? false,
+                Comment = lastItem?.Comment,
+                Enabled = true,
             };
 
             SelectedPostProcessing = item;
             ProcessingFind = item.Find;
             ProcessingReplacement = item.Replacement;
             ProcessingCaseSensitive = item.CaseSensitive;
+            ProcessingComment = item.Comment;
+            ProcessingEnabled = item.Enabled;
 
             _isNewProcessing = true;
             IsPostProcessingDialogOpen = true;
@@ -642,6 +652,8 @@ namespace FanslationStudio.UserExperience
                 ProcessingFind = item.Find;
                 ProcessingReplacement = item.Replacement;
                 ProcessingCaseSensitive = item.CaseSensitive;
+                ProcessingComment = item.Comment;
+                ProcessingEnabled = item.Enabled;
 
                 _isNewProcessing = false;
                 IsPostProcessingDialogOpen = true;
@@ -660,8 +672,10 @@ namespace FanslationStudio.UserExperience
         #region Pre & Post Processing Dialog
 
         private string _processingFind;
-        private string _processingReplacement;
+        private string _processingReplacement;        
+        private string _processingComment;
         private bool _processingCaseSensitive;
+        private bool _processingEnabled;
         private bool _isNewProcessing;
 
         public string ProcessingFind
@@ -690,6 +704,19 @@ namespace FanslationStudio.UserExperience
             }
         }
 
+        public string ProcessingComment
+        {
+            get
+            {
+                return _processingComment;
+            }
+            set
+            {
+                _processingComment = value;
+                NotifyOfPropertyChange(() => ProcessingComment);
+            }
+        }
+
         public bool ProcessingCaseSensitive
         {
             get
@@ -703,6 +730,19 @@ namespace FanslationStudio.UserExperience
             }
         }
 
+        public bool ProcessingEnabled
+        {
+            get
+            {
+                return _processingEnabled;
+            }
+            set
+            {
+                _processingEnabled = value;
+                NotifyOfPropertyChange(() => ProcessingEnabled);
+            }
+        }
+
         public void AcceptPreFindReplace()
         {
             if (_isNewProcessing)
@@ -712,6 +752,8 @@ namespace FanslationStudio.UserExperience
                     Find = ProcessingFind,
                     Replacement = ProcessingReplacement,
                     CaseSensitive = ProcessingCaseSensitive,
+                    Comment = ProcessingComment,
+                    Enabled = ProcessingEnabled,
                 };
 
                 PreProcessingItems.Add(item);
@@ -725,6 +767,8 @@ namespace FanslationStudio.UserExperience
                     item.Find = ProcessingFind;
                     item.Replacement = ProcessingReplacement;
                     item.CaseSensitive = ProcessingCaseSensitive;
+                    item.Comment = ProcessingComment;
+                    item.Enabled = ProcessingEnabled;
                 }
             }
 
@@ -746,6 +790,8 @@ namespace FanslationStudio.UserExperience
                     Find = ProcessingFind,
                     Replacement = ProcessingReplacement,
                     CaseSensitive = ProcessingCaseSensitive,
+                    Comment = ProcessingComment,
+                    Enabled = ProcessingEnabled,
                 };
 
                 PostProcessingItems.Add(item);
@@ -759,6 +805,8 @@ namespace FanslationStudio.UserExperience
                     item.Find = ProcessingFind;
                     item.Replacement = ProcessingReplacement;
                     item.CaseSensitive = ProcessingCaseSensitive;
+                    item.Comment = ProcessingComment;
+                    item.Enabled = ProcessingEnabled;
                 }
             }
 
