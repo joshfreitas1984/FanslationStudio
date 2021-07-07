@@ -65,7 +65,7 @@ namespace FanslationStudio.Domain
                 string translatedFolder = $"{_translationFolderVersion}\\{scriptToTranslate.SourcePath}";
                 
                 //Load raw script entries
-                var scripts = scriptToTranslate.GetTranslationLines(_rawFolderVersion);
+                var scripts = scriptToTranslate.GetTranslationLines(_rawFolderVersion, project);
 
                 //Go through each script and add it if its missing
                 ScriptTranslationService.WriteBulkScriptFiles(translatedFolder, scripts, false);
@@ -85,7 +85,7 @@ namespace FanslationStudio.Domain
 
                 //Load last saved translation
                 var scripts = ScriptTranslationService.LoadBulkScriptTranslations(translatedFolder);
-                scriptToTranslate.OutputLines(scripts, outputFolder);
+                scriptToTranslate.OutputLines(scripts, outputFolder, project);
             }
         }
     }

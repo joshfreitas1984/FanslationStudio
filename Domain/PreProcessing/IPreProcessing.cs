@@ -6,5 +6,6 @@ namespace FanslationStudio.Domain.PreProcessing
 {
     public interface IPreProcessing
     {
+        string ProcessLine(string line);
     }
 }

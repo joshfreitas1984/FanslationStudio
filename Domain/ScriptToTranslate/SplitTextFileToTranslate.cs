@@ -21,7 +21,7 @@ namespace FanslationStudio.Domain.ScriptToTranslate
         //Should this be here - or should we use some injectable set of pre/post processing
         public int OverrideFontSize { get; set; }
 
-        public List<ScriptTranslation> GetTranslationLines(string rawFolder)
+        public List<ScriptTranslation> GetTranslationLines(string rawFolder, Project project)
         {
             var translations = new List<ScriptTranslation>();
             string rawFile = $"{rawFolder}\\{SourcePath}";
@@ -66,7 +66,7 @@ namespace FanslationStudio.Domain.ScriptToTranslate
                     if (SplitIndexes.Contains(i))
                     {
                         item.RequiresTranslation = true;
-                        item.CleanedUpLine = CleanUpLine(lineSplits[i]);
+                        item.CleanedUpLine = PreProcessLine(lineSplits[i], project.PreProcessingItems);
                     }
 
                     translation.Items.Add(item);
@@ -78,7 +78,7 @@ namespace FanslationStudio.Domain.ScriptToTranslate
             return translations;
         }
 
-        public void OutputLines(List<ScriptTranslation> scripts, string outputFolder)
+        public void OutputLines(List<ScriptTranslation> scripts, string outputFolder, Project project)
         {
             List<string> lines = new List<string>();
 
@@ -93,7 +93,9 @@ namespace FanslationStudio.Domain.ScriptToTranslate
                     //Add Post Processing
                     if (item.RequiresTranslation)
                     {
-                        itemToAppend = CleanupTranslatedFile(itemToAppend);
+                        //itemToAppend = CleanupTranslatedFile(itemToAppend);
+                        itemToAppend = PostProcessLine(itemToAppend, project.PostProcessingItems);
+                        itemToAppend = OverrideFontSizeOnLine(itemToAppend);
                     }
 
                     line.Append(itemToAppend);
@@ -125,6 +127,23 @@ namespace FanslationStudio.Domain.ScriptToTranslate
         private const string _wideComma = "，";
         private const string _wideBullets = "…";
 
+        public string PreProcessLine(string line, List<PreProcessing.IPreProcessing> preProcessings)
+        {
+            foreach (var p in preProcessings)
+                line = p.ProcessLine(line);
+
+            return line;
+        }
+
+        public string PostProcessLine(string line, List<PostProcessing.IPostProcessing> preProcessings)
+        {
+            foreach (var p in preProcessings)
+                line = p.ProcessLine(line);
+
+            return line;
+        }
+
+        [Obsolete]
         public string CleanUpLine(string line)
         {
             //DeepL doesnt really like dealing with markup so we are going to encase funky characters and mark up blocks with <>'s so it thinks they are XML
@@ -180,6 +199,7 @@ namespace FanslationStudio.Domain.ScriptToTranslate
             return line;
         }
 
+        [Obsolete]
         public string CleanupTranslatedFile(string line)
         {
             //Do a little bit of content clean up so that we dont pick it up in stuff we need to manually do
@@ -266,6 +286,13 @@ namespace FanslationStudio.Domain.ScriptToTranslate
                 }
             }
 
+            response = OverrideFontSizeOnLine(response);
+
+            return response;
+        }
+
+        private string OverrideFontSizeOnLine(string line)
+        {
             //Add in Size override 
             if (OverrideFontSize != 0)
             {
@@ -293,15 +320,13 @@ namespace FanslationStudio.Domain.ScriptToTranslate
                     "Shi Hongtu"
                 };
 
-                if (!exclusions.Contains(response) && !response.StartsWith("<size="))
+                if (!exclusions.Contains(line) && !line.StartsWith("<size="))
                 {
-                    response = $"<size={OverrideFontSize}>{response}</size>";
+                    line = $"<size={OverrideFontSize}>{line}</size>";
                 }
             }
 
-
-
-            return response;
+            return line;
         }
 
         public void WriteProgress(double lineCount, double currentLine)

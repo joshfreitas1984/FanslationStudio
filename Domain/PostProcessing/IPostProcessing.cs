@@ -6,5 +6,6 @@ namespace FanslationStudio.Domain.PostProcessing
 {
     public interface IPostProcessing
     {
+        string ProcessLine(string line);
     }
 }

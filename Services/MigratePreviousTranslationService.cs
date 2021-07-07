@@ -19,7 +19,7 @@ namespace FanslationStudio.Services
                 var translatedVersionFolder = ProjectFolderService.CalculateTranslationVersionFolder(projectFolder, version);
 
                 //var lines = scriptToTranslate.GetTranslationLines(rawVersionFolder);
-                var oldTransLines = scriptToTranslate.GetTranslationLines(version.GameTranslatorSource);
+                var oldTransLines = scriptToTranslate.GetTranslationLines(version.GameTranslatorSource, project);
                 
                 foreach(var oldGtScript in oldTransLines)
                 {
