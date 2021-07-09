@@ -23,7 +23,7 @@ namespace FanslationStudio.UserExperience
     /// <summary>
     /// Interaction logic for ManualTranslateView.xaml
     /// </summary>
-    public partial class ManualTranslateView : UserControl, IHandle<RawLineCopiedEvent>, IHandle<RequestDeeplResult>
+    public partial class ManualTranslateView : UserControl, IHandle<RawLineCopiedEvent>, IHandle<RequestDeeplResult>, IHandle<MoveToNextGridItemEvent>
     {
         private string _lastValidTranslation;
         private IEventAggregator _eventAggregator;
@@ -109,6 +109,19 @@ namespace FanslationStudio.UserExperience
         {
             //Try now and hit the browser
             await EvaluateDeepLTranslation();
+        }
+
+        public Task HandleAsync(MoveToNextGridItemEvent message, CancellationToken cancellationToken)
+        {
+            //Move to next item
+            if (SearchGrid.SelectedIndex < SearchGrid.Items.Count - 1)
+            {
+                SearchGrid.SelectedIndex++;
+                SearchGrid.UpdateLayout();
+                SearchGrid.ScrollIntoView(SearchGrid.SelectedItem);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

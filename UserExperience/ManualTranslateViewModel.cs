@@ -324,6 +324,24 @@ namespace FanslationStudio.UserExperience
                 SelectedItem.Script, true);
 
             NotifyOfPropertyChange(() => SelectedCurrentTranslation);
+
+            _eventAggregator.PublishOnUIThreadAsync(new Events.MoveToNextGridItemEvent());
+
+            
+        }
+
+        public void CreateSearchPattern()
+        {
+            string find = SelectedCurrentTranslation;
+            if (!SearchPatterns.Any(s => s.Find == find))
+            {
+                //Do this after deepl
+                SearchPatterns.Add(new SearchPattern()
+                {
+                    Find = SelectedCurrentTranslation,
+                    Replacement = ScratchZone,
+                });
+            }
         }
 
         public void QuickReplace()

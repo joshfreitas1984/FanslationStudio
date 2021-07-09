@@ -66,6 +66,15 @@
 								</StackPanel>
 							</Button>
 
+							<ToggleButton x:Name="ShowMtlPanel"
+										  Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
+										  IsChecked="False" />
+
+							<TextBlock Text="MTL Panel"
+									   VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignTextBlock}"
+									   FontSize="10" />
+
 							<TextBlock VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"
 									   Margin="0"
@@ -76,6 +85,7 @@
 						</StackPanel>
 					</materialDesign:ColorZone>
 					<DataGrid ItemsSource="{Binding SearchResults}"
+							  x:Name="SearchGrid"
 							  cal:Message.Attach="[Event SelectionChanged] = [Action SelectSearchResult($this)]"
 							  MinHeight="250"
 							  MaxHeight="250"
@@ -196,21 +206,6 @@
 											   FontSize="10" />
 								</StackPanel>
 							</Button>
-
-							<Button x:Name="CopyFromDeepL"
-									Style="{StaticResource MaterialDesignFlatMidBgButton}">
-
-								<StackPanel Orientation="Horizontal">
-									<materialDesign:PackIcon Kind="ContentCopy"
-															 VerticalAlignment="Center"
-															 Height="16"
-															 Width="16" />
-									<TextBlock Text="Copy From Deepl"
-											   VerticalAlignment="Center"
-											   Style="{StaticResource MaterialDesignTextBlock}"
-											   FontSize="10" />
-								</StackPanel>
-							</Button>
 						</StackPanel>
 					</materialDesign:ColorZone>
 					<TextBox x:Name="SelectedCurrentTranslation"
@@ -245,14 +240,35 @@
 								</StackPanel>
 							</Button>
 
-							<ToggleButton x:Name="ShowMtlPanel"
-										  Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
-										  IsChecked="False" />
+							<Button x:Name="CopyFromDeepL"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
 
-							<TextBlock Text="MTL Panel"
-									   VerticalAlignment="Center"
-									   Style="{StaticResource MaterialDesignTextBlock}"
-									   FontSize="10" />
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="ContentCopy"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Copy from DeepL"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
+
+							<Button x:Name="CreateSearchPattern"
+									Style="{StaticResource MaterialDesignFlatMidBgButton}">
+
+								<StackPanel Orientation="Horizontal">
+									<materialDesign:PackIcon Kind="SearchAdd"
+															 VerticalAlignment="Center"
+															 Height="16"
+															 Width="16" />
+									<TextBlock Text="Create Search Pattern"
+											   VerticalAlignment="Center"
+											   Style="{StaticResource MaterialDesignTextBlock}"
+											   FontSize="10" />
+								</StackPanel>
+							</Button>
 
 							<materialDesign:ColorZone Mode="Standard"
 													  Padding="8 4 8 4"
@@ -371,7 +387,7 @@
 
 			<!-- Search Panels: Have to manually bind drawers the conventions dont seem to work -->
 			<materialDesign:DrawerHost.LeftDrawerContent>
-				<StackPanel Margin="8"
+				<StackPanel Margin="8"							
 							controls:Spacing.Vertical="16">
 					<TextBlock Style="{StaticResource MaterialDesignHeadline4TextBlock}"
 							   Margin="0, 16"
@@ -505,6 +521,7 @@
 					</materialDesign:ColorZone>
 
 					<DataGrid ItemsSource="{Binding SearchPatterns}"
+							  MaxHeight="900"
 							  IsReadOnly="False"
 							  AutoGenerateColumns="False"
 							  SelectionUnit="FullRow"
