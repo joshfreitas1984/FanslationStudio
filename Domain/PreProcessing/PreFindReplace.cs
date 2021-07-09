@@ -9,6 +9,9 @@ namespace FanslationStudio.Domain.PreProcessing
     {
         public string ProcessLine(string line)
         {
+            if (!Enabled)
+                return line;
+
             if (IsRegex)
             {
                 line = Regex.Replace(line, Find, Replacement);

@@ -1,15 +1,59 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FanslationStudio.Domain
 {
-    public class ScriptSearchResult
+    public class ScriptSearchResult : PropertyChangedBase
     {
-        public string SourcePath { get; set; }
-        public ScriptTranslation Script { get; set; }
-        public ScriptTranslationItem Item { get; set; }
-        public string Find { get; set; }
-        public string Replace { get; set; }
+        private string _sourcePath;
+        private ScriptTranslation _script;
+        private ScriptTranslationItem _item;
+        private string _find;
+        private string _replace;
+
+        public string SourcePath
+        {
+            get => _sourcePath;
+            set
+            {
+                _sourcePath = value;
+                NotifyOfPropertyChange(() => SourcePath);
+            }
+        }
+
+        public ScriptTranslation Script
+        {
+            get => _script; set
+            {
+                _script = value;
+                NotifyOfPropertyChange(() => SourcePath);
+            }
+        }
+        public ScriptTranslationItem Item
+        {
+            get => _item; set
+            {
+                _item = value;
+                NotifyOfPropertyChange(() => SourcePath);
+            }
+        }
+        public string Find
+        {
+            get => _find; set
+            {
+                _find = value;
+                NotifyOfPropertyChange(() => SourcePath);
+            }
+        }
+        public string Replace
+        {
+            get => _replace; set
+            {
+                _replace = value;
+                NotifyOfPropertyChange(() => SourcePath);
+            }
+        }
     }
 }

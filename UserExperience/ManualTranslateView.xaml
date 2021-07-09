@@ -323,9 +323,9 @@
 					<Grid Margin="8">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto" />
 							<RowDefinition />
-							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto" />
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
@@ -384,17 +384,23 @@
 											  Margin="16 0 0 0"
 											  materialDesign:ShadowAssist.ShadowDepth="Depth1">
 						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
-							<Button Style="{DynamicResource MaterialDesignToolButton}">
+
+							<Button Style="{DynamicResource MaterialDesignToolButton}"
+									Grid.Column="0">
 								<materialDesign:PackIcon Kind="Search"
 														 Opacity=".56" />
 							</Button>
+
 							<TextBox Text="{Binding Path=QuickFindTerm}"
 									 Grid.Column="1"
 									 Margin="8 0 0 0"
@@ -402,25 +408,42 @@
 									 BorderThickness="0"
 									 MinWidth="200"
 									 VerticalAlignment="Center" />
-							<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
-									  Grid.Column="2"
-									  Margin="8 0 0 0"
-									  IsChecked="{Binding Path=SearchUntranslated}"
-									  Content="Untranslated" />
-
-							<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
-									  Grid.Column="3"
-									  Margin="8 0 0 0"
-									  IsChecked="{Binding Path=SearchMerge}"
-									  Content="Merge Changes" />
 
 							<Button cal:Message.Attach="[Event Click] = [Action QuickSearch()]"
 									Style="{DynamicResource MaterialDesignToolButton}"
-									Grid.Column="4">
+									Grid.Column="2">
 								<materialDesign:PackIcon Kind="Send"
 														 Opacity=".56"
 														 Margin="8 0 0 0" />
 							</Button>
+
+							<StackPanel Grid.Row="1"
+										Grid.ColumnSpan="5"
+										Orientation="Horizontal"
+										controls:Spacing.Horizontal="16">
+								<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+										  Margin="8 0 0 0"
+										  IsChecked="{Binding Path=SearchMismatchTranslation}"
+										  Content="Mismatched" />
+
+								<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+										  Margin="8 0 0 0"
+										  IsChecked="{Binding Path=SearchUntranslated}"
+										  Content="Untranslated" />
+
+								<CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+										  Margin="8 0 0 0"
+										  IsChecked="{Binding Path=SearchMerge}"
+										  Content="Merged Version Changes" />
+
+								<ToggleButton Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
+											  IsChecked="{Binding Path=IsSearchingRaw}" />
+
+								<TextBlock Text="{Binding IsSearchingCaption, Mode=OneWay, FallbackValue='Search Ids'}"
+										   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+										   VerticalAlignment="Center"
+										   Grid.Column="3" />
+							</StackPanel>
 						</Grid>
 					</materialDesign:ColorZone>
 

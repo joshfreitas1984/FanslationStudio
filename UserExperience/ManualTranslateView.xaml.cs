@@ -96,7 +96,7 @@ namespace FanslationStudio.UserExperience
 
         public Task HandleAsync(RawLineCopiedEvent message, CancellationToken cancellationToken)
         {
-            string encoded = UrlEncoder.Create().Encode(message.RawLine);
+            string encoded = UrlEncoder.Create().Encode(message.RawLine ?? string.Empty);
             string sourceLanguageCode = message.SourceLanguageCode; //Might need to map these in future
             string targetLanguageCode = message.TargetLanguageCode;
 

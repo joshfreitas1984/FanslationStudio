@@ -137,6 +137,8 @@ namespace FanslationStudio.Domain.ScriptToTranslate
 
         public string PostProcessLine(string line, List<PostProcessing.IPostProcessing> preProcessings)
         {
+            line = line.Trim(); //Trim it first because we might put in legit spaces after
+
             foreach (var p in preProcessings)
                 line = p.ProcessLine(line);
 

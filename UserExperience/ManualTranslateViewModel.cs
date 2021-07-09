@@ -114,8 +114,11 @@ namespace FanslationStudio.UserExperience
         private string _scratchZone;
         private string _quickFindTerm;
         private string _quickReplaceTerm;
+        private string _lastSentLine;
         private bool _searchUntranslated;
+        private bool _searchMismatchTranslation;
         private bool _searchMerge;
+        private bool _isSearchingRaw;
 
         public ObservableCollection<ScriptSearchResult> SearchResults
         {
@@ -219,6 +222,18 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => SearchUntranslated);
             }
         }
+        public bool SearchMismatchTranslation
+        {
+            get
+            {
+                return _searchMismatchTranslation;
+            }
+            set
+            {
+                _searchMismatchTranslation = value;
+                NotifyOfPropertyChange(() => SearchMismatchTranslation);
+            }
+        }
         public bool SearchMerge
         {
             get
@@ -231,12 +246,30 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => SearchMerge);
             }
         }
+        public bool IsSearchingRaw
+        {
+            get
+            {
+                return _isSearchingRaw;
+            }
+            set
+            {
+                _isSearchingRaw = value;
+                NotifyOfPropertyChange(() => IsSearchingRaw);
+                NotifyOfPropertyChange(() => IsSearchingCaption);
+            }
+        }
+        public string IsSearchingCaption
+        {
+            get { return _isSearchingRaw ? "Search Raws" : "Search Ids";  }
+        }
 
         public ManualTranslateViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             _eventAggregator.SubscribeOnPublishedThread(this);
-            
+
+            _isSearchingRaw = true;
             Activated += OnActivate;
         }
 
@@ -256,8 +289,11 @@ namespace FanslationStudio.UserExperience
             QuickReplaceTerm = item?.Replace;
             ScratchZone = string.Empty;
 
-            if (item != null)
-                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item?.Item.CleanedUpLine, Version.SourceLanguageCode, Version.TargetLanguageCode));
+            if (item != null && _lastSentLine != item.Item.CleanedUpLine)
+            {
+                _lastSentLine = item.Item.CleanedUpLine;
+                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item.Item.CleanedUpLine, Version.SourceLanguageCode, Version.TargetLanguageCode));
+            }
         }
 
         public async void CopyFromDeepL()
@@ -333,7 +369,7 @@ namespace FanslationStudio.UserExperience
 
         public void QuickSearch()
         {
-            var foundResults = SearchScriptService.QuickSearch(_scripts, SearchMerge, SearchUntranslated, QuickFindTerm);
+            var foundResults = SearchScriptService.QuickSearch(_scripts, IsSearchingRaw, SearchMerge, SearchUntranslated, SearchMismatchTranslation, QuickFindTerm);
             SearchResults = new ObservableCollection<ScriptSearchResult>(foundResults);
             ShowSearchPanel = false;                     
         }
