@@ -170,7 +170,6 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => QuickReplaceTerm);
             }
         }
-
         public string SelectedRaw
         {
             get
@@ -197,7 +196,6 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => ScratchZone);
             }
         }
-
         public ObservableCollection<SearchPattern> SearchPatterns
         {
             get
@@ -289,10 +287,13 @@ namespace FanslationStudio.UserExperience
             QuickReplaceTerm = item?.Replace;
             ScratchZone = string.Empty;
 
-            if (item != null && _lastSentLine != item.Item.CleanedUpLine)
+            string cleanedUpLine = item?.Item.CleanedUpLine
+                .Replace("<<", "<").Replace(">>", ">"); //Temp clean up
+
+            if (item != null && _lastSentLine != cleanedUpLine)
             {
-                _lastSentLine = item.Item.CleanedUpLine;
-                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(item.Item.CleanedUpLine, Version.SourceLanguageCode, Version.TargetLanguageCode));
+                _lastSentLine = cleanedUpLine;
+                await _eventAggregator.PublishOnUIThreadAsync(new Events.RawLineCopiedEvent(cleanedUpLine, Version.SourceLanguageCode, Version.TargetLanguageCode));
             }
         }
 

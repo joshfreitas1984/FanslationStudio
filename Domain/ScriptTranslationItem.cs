@@ -103,7 +103,8 @@ namespace FanslationStudio.Domain
                 else if (!string.IsNullOrEmpty(InitialTranslation))
                     return InitialTranslation;
                 else
-                    return Raw;
+                    return string.Empty;
+                //    return Raw;
             }
         }
     }

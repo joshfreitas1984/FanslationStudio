@@ -86,8 +86,8 @@ namespace FanslationStudio.Services
                                 continue;
 
                             string resultingTranslation = scriptItem.ResultingTranslation;
-                            if (resultingTranslation == scriptItem.Raw)
-                                resultingTranslation = string.Empty;
+                            //if (resultingTranslation == scriptItem.Raw)
+                            //    resultingTranslation = string.Empty;
 
                             //Add Merge Changes
                             if (searchWhereHasMergeChanges && scriptItem.MergeHadRawChanges)
@@ -99,7 +99,7 @@ namespace FanslationStudio.Services
                                 });
 
                             //Add Untranslated
-                            if (searchWhereUntranslated && !string.IsNullOrEmpty(scriptItem.Raw) && string.IsNullOrEmpty(resultingTranslation))
+                            if (searchWhereUntranslated && !string.IsNullOrEmpty(scriptItem.Raw) && (string.IsNullOrEmpty(resultingTranslation) || resultingTranslation == scriptItem.CleanedUpLine))
                                 foundResults.Add(new ScriptSearchResult()
                                 {
                                     SourcePath = scriptEntry.Key,
@@ -108,7 +108,7 @@ namespace FanslationStudio.Services
                                 });
 
                             //Add found terms
-                            if (!string.IsNullOrEmpty(quickSearchTerm) && resultingTranslation.Contains(quickSearchTerm))
+                            if (!string.IsNullOrEmpty(quickSearchTerm) && FindPattern(resultingTranslation, new SearchPattern() { CaseSensitive = false, Find = quickSearchTerm }))
                                 foundResults.Add(new ScriptSearchResult()
                                 {
                                     SourcePath = scriptEntry.Key,
@@ -176,9 +176,9 @@ namespace FanslationStudio.Services
             else
             {
                 if (pattern.CaseSensitive)
-                    found = lineContent.IndexOf(pattern.Find, StringComparison.InvariantCulture) != -1;
+                    found = lineContent.Contains(pattern.Find, StringComparison.InvariantCulture);
                 else
-                    found = lineContent.IndexOf(pattern.Find, StringComparison.InvariantCultureIgnoreCase) != -1;
+                    found = lineContent.Contains(pattern.Find, StringComparison.InvariantCultureIgnoreCase);
             }
 
             return found;

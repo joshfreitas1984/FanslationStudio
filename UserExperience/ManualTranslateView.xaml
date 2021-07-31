@@ -77,7 +77,7 @@
 
 							<TextBlock VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"
-									   Margin="0"
+									   Margin="10,0,0,0"
 									   Text="{Binding Path=SearchResults.Count}" />
 							<TextBlock VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignCharacterCounterTextBlock}"
@@ -521,7 +521,7 @@
 					</materialDesign:ColorZone>
 
 					<DataGrid ItemsSource="{Binding SearchPatterns}"
-							  MaxHeight="900"
+							  MaxHeight="720"
 							  IsReadOnly="False"
 							  AutoGenerateColumns="False"
 							  SelectionUnit="FullRow"

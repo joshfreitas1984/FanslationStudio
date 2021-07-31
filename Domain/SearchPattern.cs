@@ -86,7 +86,7 @@ namespace FanslationStudio.Domain
         {
             get
             {
-                return (Find.Contains("[") || Find.Contains("^") || Find.Contains("/"));
+                return ((Find.Contains("[") && Find.Contains("]")) || Find.Contains("^") || Find.Contains("/"));
             }
         }
     }
