@@ -58,6 +58,11 @@ namespace FanslationStudio.UserExperience
             _config.WriteConfig();
 
             ShowHome();
+
+            Task.Run(() =>
+            {
+                new TcpMessagingService().RunServer(_eventAggregator);
+            });
         }     
 
         public void SelectProject(Project project)

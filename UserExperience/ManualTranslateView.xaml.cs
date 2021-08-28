@@ -47,12 +47,12 @@ namespace FanslationStudio.UserExperience
 
         private void GoogleTranslate_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            GoogleTranslate.SetZoomLevel(PercentageToToZoomLevel(75));
+            GoogleTranslate.SetZoomLevel(PercentageToToZoomLevel(50));
         }
 
         private async void DeepLTranslate_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            DeepLTranslate.SetZoomLevel(PercentageToToZoomLevel(75));
+            DeepLTranslate.SetZoomLevel(PercentageToToZoomLevel(50));
 
             //Wait for the Page to finish loading
             if (e.IsLoading == false)

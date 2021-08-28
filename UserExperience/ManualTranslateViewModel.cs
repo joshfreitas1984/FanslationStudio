@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using FanslationStudio.Domain;
 using FanslationStudio.Services;
+using FanslationStudio.UserExperience.Events;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,7 +15,9 @@ using System.Threading.Tasks;
 
 namespace FanslationStudio.UserExperience
 {
-    public class ManualTranslateViewModel : Screen, IHasProjectAndVersionViewModel, IHandle<Events.DeeplTransEvent>
+    public class ManualTranslateViewModel : Screen, IHasProjectAndVersionViewModel, 
+        IHandle<Events.DeeplTransEvent>,
+        IHandle<Events.ScriptViewedInGameEvent>
     {
         #region IHasProjectAndVersionViewModel
 
@@ -119,6 +122,7 @@ namespace FanslationStudio.UserExperience
         private bool _searchMismatchTranslation;
         private bool _searchMerge;
         private bool _isSearchingRaw;
+        private bool _isListeningMode;
 
         public ObservableCollection<ScriptSearchResult> SearchResults
         {
@@ -257,6 +261,19 @@ namespace FanslationStudio.UserExperience
                 NotifyOfPropertyChange(() => IsSearchingCaption);
             }
         }
+        public bool IsListeningMode
+        {
+            get
+            {
+                return _isListeningMode;
+            }
+            set
+            {
+                SearchResults.Clear();
+                _isListeningMode = value;
+                NotifyOfPropertyChange(() => IsListeningMode);
+            }
+        }
         public string IsSearchingCaption
         {
             get { return _isSearchingRaw ? "Search Raws" : "Search Ids";  }
@@ -265,10 +282,11 @@ namespace FanslationStudio.UserExperience
         public ManualTranslateViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            _eventAggregator.SubscribeOnPublishedThread(this);
+            _eventAggregator.SubscribeOnUIThread(this);
 
             _isSearchingRaw = true;
             Activated += OnActivate;
+            SearchResults = new ObservableCollection<ScriptSearchResult>();
         }
 
         private void OnActivate(object sender, ActivationEventArgs e)
@@ -415,6 +433,23 @@ namespace FanslationStudio.UserExperience
             {
                 SearchResults = SearchResults.ToList(),
             });
+        }
+
+        public Task HandleAsync(ScriptViewedInGameEvent message, CancellationToken cancellationToken)
+        {
+            if (IsListeningMode)
+            {
+                foreach (var script in SearchScriptService.GetByLineId(Scripts, message.LineId))
+                {
+                    if (!SearchResults.Any(s => s.Script.LineId == message.LineId))
+                    {
+                        SearchResults.Add(script);
+                        _eventAggregator.PublishOnUIThreadAsync(new Events.MoveToNextGridItemEvent());
+                    }
+                }
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

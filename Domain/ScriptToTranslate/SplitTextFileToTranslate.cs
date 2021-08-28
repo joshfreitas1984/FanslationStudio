@@ -90,6 +90,9 @@ namespace FanslationStudio.Domain.ScriptToTranslate
                 {
                     var itemToAppend = item.ResultingTranslation;
 
+                    if (string.IsNullOrEmpty(itemToAppend))
+                        itemToAppend = item.Raw;
+
                     //Add Post Processing
                     if (item.RequiresTranslation)
                     {

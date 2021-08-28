@@ -11,6 +11,32 @@ namespace FanslationStudio.Services
 {
     public static class SearchScriptService
     {
+        public static List<ScriptSearchResult> GetByLineId(Dictionary<string, List<ScriptTranslation>> _scripts,
+            string lineId)
+        {
+            var foundResults = new ConcurrentBag<ScriptSearchResult>();
+
+            Parallel.ForEach(_scripts, scriptEntry =>
+            {
+                var foundScripts = scriptEntry.Value
+                      .SelectMany(s => s.Items, (script, item) => new { script, item })
+                      .Where(s => s.item.RequiresTranslation == true
+                          && s.script.LineId == lineId);
+
+                foreach (var foundScript in foundScripts)
+                {
+                    foundResults.Add(new ScriptSearchResult()
+                    {
+                        SourcePath = scriptEntry.Key,
+                        Script = foundScript.script,
+                        Item = foundScript.item,
+                    });
+                }
+            });
+
+            return foundResults.ToList();
+        }
+
         public static List<ScriptSearchResult> QuickSearch(Dictionary<string, List<ScriptTranslation>> _scripts,
             bool isSearchingRaw,
             bool searchWhereHasMergeChanges,
@@ -21,7 +47,7 @@ namespace FanslationStudio.Services
             var foundResults = new ConcurrentBag<ScriptSearchResult>();
 
             Parallel.ForEach(_scripts, scriptEntry =>
-            {              
+            {
                 if (!isSearchingRaw) //Id Search
                 {
                     var foundScripts = scriptEntry.Value

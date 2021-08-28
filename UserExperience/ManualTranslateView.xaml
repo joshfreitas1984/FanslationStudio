@@ -66,11 +66,18 @@
 								</StackPanel>
 							</Button>
 
-							<ToggleButton x:Name="ShowMtlPanel"
-										  Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
-										  IsChecked="False" />
+							<ToggleButton Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
+										  IsChecked="{Binding Path=ShowMtlPanel}" />
 
 							<TextBlock Text="MTL Panel"
+									   VerticalAlignment="Center"
+									   Style="{StaticResource MaterialDesignTextBlock}"
+									   FontSize="10" />
+
+							<ToggleButton Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
+										  IsChecked="{Binding Path=IsListeningMode}" />
+
+							<TextBlock Text="Listen to Game"
 									   VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignTextBlock}"
 									   FontSize="10" />
@@ -87,8 +94,8 @@
 					<DataGrid ItemsSource="{Binding SearchResults}"
 							  x:Name="SearchGrid"
 							  cal:Message.Attach="[Event SelectionChanged] = [Action SelectSearchResult($this)]"
-							  MinHeight="250"
-							  MaxHeight="250"
+							  MinHeight="400"
+							  MaxHeight="400"
 							  IsReadOnly="True"
 							  AutoGenerateColumns="False"
 							  SelectionUnit="FullRow"
