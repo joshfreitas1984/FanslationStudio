@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="FanslationStudio.UserExperience.Dialogs.MergeVersionDialog"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:FanslationStudio.UserExperience"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:cal="http://www.caliburnproject.org"
+			 xmlns:controls="clr-namespace:FanslationStudio.UserExperience.Controls"
+			 mc:Ignorable="d">
+	<StackPanel controls:Spacing.Vertical="16"
+				Margin="16"
+				Width="600">
+
+		<!-- Select Old Version -->
+        <TextBox Text="{Binding Path=Version.Version}"
+				 materialDesign:HintAssist.Hint="Target Version"
+				 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+				 Margin="0,5"
+                 IsReadOnly="True"
+				 VerticalAlignment="Center" />
+        
+        <!-- Select New Version -->
+        <ComboBox
+			materialDesign:HintAssist.Hint="Version To Merge"
+            SelectedItem="{Binding Path=SelectedVersionToMerge}"
+            ItemsSource="{Binding Path=Versions}"
+            DisplayMemberPath="Version"/>
+
+        <!-- Actions -->
+        <StackPanel Orientation="Horizontal"
+					HorizontalAlignment="Right">
+
+			<Button Style="{StaticResource MaterialDesignFlatButton}"
+					IsDefault="True"
+					Margin="0 8 8 0"
+					cal:Message.Attach="[Event Click] = [Action AcceptMergeVersion()]"
+					Content="MERGE" />
+
+			<Button Style="{StaticResource MaterialDesignFlatButton}"
+					IsCancel="True"
+					Margin="0 8 8 0"
+					cal:Message.Attach="[Event Click] = [Action CancelMergeVersion()]"
+					Content="CANCEL" />
+		</StackPanel>
+	</StackPanel>
+</UserControl>

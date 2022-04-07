@@ -165,13 +165,14 @@ namespace FanslationStudio.UserExperience
         private bool _isPreProcessingDialogOpen;
         private bool _isPostProcessingDialogOpen;
         private bool _isBulkImportFileDialogOpen;
+        private bool _isMergVersionDialogOpen;
 
         public bool IsDialogOpen
         {
 
             get
             {
-                return _isVersionDialogOpen || _isScriptDialogOpen || _isPostProcessingDialogOpen || _isPreProcessingDialogOpen || _isBulkImportFileDialogOpen;
+                return _isVersionDialogOpen || _isScriptDialogOpen || _isPostProcessingDialogOpen || _isPreProcessingDialogOpen || _isBulkImportFileDialogOpen || _isMergVersionDialogOpen;
             }
         }
 
@@ -186,6 +187,21 @@ namespace FanslationStudio.UserExperience
             {
                 ResetDialogState();
                 _isVersionDialogOpen = value;
+                NotifyDialogState();
+            }
+        }
+
+        public bool IsMergeVersionDialogOpen
+        {
+
+            get
+            {
+                return _isMergVersionDialogOpen;
+            }
+            set
+            {
+                ResetDialogState();
+                _isMergVersionDialogOpen = value;
                 NotifyDialogState();
             }
         }
@@ -257,11 +273,13 @@ namespace FanslationStudio.UserExperience
             _isPostProcessingDialogOpen = false;
             _isPreProcessingDialogOpen = false;
             _isBulkImportFileDialogOpen = false;
+            _isMergVersionDialogOpen = false;
         }
 
         public void NotifyDialogState()
         {
             NotifyOfPropertyChange(() => IsVersionDialogOpen);
+            NotifyOfPropertyChange(() => IsMergeVersionDialogOpen);
             NotifyOfPropertyChange(() => IsScriptDialogOpen);
             NotifyOfPropertyChange(() => IsPreProcessingDialogOpen);
             NotifyOfPropertyChange(() => IsPostProcessingDialogOpen);
@@ -335,6 +353,11 @@ namespace FanslationStudio.UserExperience
 
             IsVersionDialogOpen = true;
         }
+
+        public void MergeVersion()
+        {
+            IsMergeVersionDialogOpen = true;
+        }  
 
         public void EditVersion(ProjectVersion version)
         {
@@ -485,6 +508,42 @@ namespace FanslationStudio.UserExperience
             {
                 RawInputFolder = openFileDialog.FileName;
             }
+        }
+
+        #endregion
+
+        #region Merge Version Dialog
+
+        private ProjectVersion _selectedVersionToMerge;
+
+        public ProjectVersion SelectedVersionToMerge
+        {
+            get
+            {
+                return _selectedVersionToMerge;
+            }
+            set
+            {
+                _selectedVersionToMerge = value;
+                NotifyOfPropertyChange(() => SelectedVersionToMerge);
+            }
+        }
+
+        public void AcceptMergeVersion()
+        {
+            _eventAggregator.PublishOnUIThreadAsync(new Events.MergeVersionEvent()
+            {
+                Project = _project,
+                TargetVersion = Version,
+                VersionToMerge = SelectedVersionToMerge
+            });
+
+            IsMergeVersionDialogOpen = false;
+        }
+
+        public void CancelMergeVersion()
+        {
+            IsMergeVersionDialogOpen = false;
         }
 
         #endregion

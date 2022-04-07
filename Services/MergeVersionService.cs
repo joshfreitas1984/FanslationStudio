@@ -24,8 +24,10 @@ namespace FanslationStudio.Services
                 ScriptTranslation previousTrans = ScriptTranslationService.LoadIndividualScriptTranslation(oldFile);
                 ScriptTranslation newTrans = ScriptTranslationService.LoadIndividualScriptTranslation(newFile);
 
+                //Merge them
                 MergeVersions(previousTrans, newTrans, newFile);
 
+                //Write them
                 ScriptTranslationService.WriteIndividualScriptFile(Path.GetDirectoryName(newFile), newTrans, true);
             }
         }

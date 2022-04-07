@@ -24,7 +24,10 @@
 				<!-- Version Dialog -->
 				<dialogs:VersionDialog Visibility="{Binding Path=IsVersionDialogOpen, Converter={StaticResource BoolToVis}}" />
 
-				<!-- Script To Translate Dialog -->
+                <!-- Merge Version Dialog -->
+                <dialogs:MergeVersionDialog Visibility="{Binding Path=IsMergeVersionDialogOpen, Converter={StaticResource BoolToVis}}" />
+
+                <!-- Script To Translate Dialog -->
 				<dialogs:SplitTextFileToTranslateDialog Visibility="{Binding Path=IsScriptDialogOpen, Converter={StaticResource BoolToVis}}" />
 
 				<!-- PrePocessing Dialog -->
@@ -76,7 +79,7 @@
 								</StackPanel>
 							</Button>
 
-							<!--<Button x:Name="MergeVersion"
+							<Button x:Name="MergeVersion"
 									Style="{StaticResource MaterialDesignFlatMidBgButton}">
 
 								<StackPanel Orientation="Horizontal">
@@ -89,7 +92,7 @@
 											   Style="{StaticResource MaterialDesignTextBlock}"
 											   FontSize="10" />
 								</StackPanel>
-							</Button>-->
+							</Button>
 
 						</StackPanel>
 					</materialDesign:ColorZone>

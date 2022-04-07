@@ -16,7 +16,7 @@ namespace FanslationStudio.UserExperience
 
     public class ShellViewModel : Conductor<object>, IHandle<SelectProjectEvent>, IHandle<SelectProjectVersionEvent>, 
         IHandle<ImportProjectVersionEvent>, IHandle<GenerateOutputFilesEvent>, IHandle<GenerateExportFilesEvent>,
-        IHandle<ImportExportFilesEvent>
+        IHandle<ImportExportFilesEvent>, IHandle<MergeVersionEvent>
     {
         private IEventAggregator _eventAggregator;
         private Config _config;
@@ -161,6 +161,19 @@ namespace FanslationStudio.UserExperience
             });
         }
 
+        public void MergeVersions(Project project, ProjectVersion versionToMerge, ProjectVersion targetVersion)
+        {
+            IsImportingRawDialogOpen = true;
+
+            Task.Run(() =>
+            {
+                MergeVersionService.MergeOldVersion(_config, project, versionToMerge, targetVersion);
+
+                Thread.Sleep(500); //Avoid flicker
+                IsImportingRawDialogOpen = false;
+            });
+        }
+
         //Method to handle navigation because we cant get caliburn to pipe through
         public void TabSelectionChanged(TabControl tabControl)
         {
@@ -247,6 +260,13 @@ namespace FanslationStudio.UserExperience
         public async Task HandleAsync(GenerateOutputFilesEvent message, CancellationToken cancellationToken)
         {
             OuputFiles(message.SelectedVersion);
+            await Task.CompletedTask;
+        }
+
+
+        public async Task HandleAsync(MergeVersionEvent message, CancellationToken cancellationToken)
+        {
+            MergeVersions(message.Project, message.VersionToMerge, message.TargetVersion);
             await Task.CompletedTask;
         }
 

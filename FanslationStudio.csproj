@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="4.0.173" />
-    <PackageReference Include="CefSharp.Wpf.NETCore" Version="91.1.211" />
-    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="CefSharp.Wpf.NETCore" Version="100.0.140" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.4.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SharpClipboard" Version="3.5.2" />
@@ -38,6 +38,9 @@
     <Compile Update="UserExperience\Dialogs\BulkImportFileDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserExperience\Dialogs\MergeVersionDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -62,14 +65,18 @@
     <Page Update="UserExperience\Dialogs\BulkImportFileDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserExperience\Dialogs\MergeVersionDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="91.1.21" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="100.0.14" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="91.1.21" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="100.0.14" />
   </ItemGroup>
 
 </Project>
